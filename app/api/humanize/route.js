@@ -61,6 +61,7 @@ export async function POST(request) {
       metadata,
     });
   } catch (err) {
+    console.log('error', err);
     const message = err instanceof Error ? err.message : String(err);
 
     // Surface rate-limit errors clearly
