@@ -1,9 +1,12 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Humanizer AI — Transform AI Text into Natural Writing",
+  title: {
+    default: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
+    template: "%s | Humanizer AI",
+  },
   description:
-    "Paste AI-generated content and get a more natural, readable, human-edited version. Improve readability, flow, tone, and sentence variety.",
+    "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
 };
 
 /**
