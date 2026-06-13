@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { humanizeText } from "@/lib/gemini";
 
-const MIN_LENGTH = 20;
-const MAX_LENGTH = 50_000;
+const MIN_LENGTH = 50;
+const MAX_LENGTH = 20_000;
 
 /**
  * POST /api/humanize
