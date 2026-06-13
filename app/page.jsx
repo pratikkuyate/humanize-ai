@@ -4,7 +4,7 @@ export const metadata = {
   title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
   description:
     "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://humanize-ai-chi.vercel.app/" },
   openGraph: {
     title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
     description:
