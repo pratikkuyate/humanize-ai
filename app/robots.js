@@ -1,4 +1,5 @@
 export default function robots() {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
   return {
     rules: [
       {
@@ -7,7 +8,7 @@ export default function robots() {
         disallow: '/api/',
       },
     ],
-    sitemap: 'https://humanize-ai-chi.vercel.app/sitemap.xml',
-    host: 'https://humanize-ai-chi.vercel.app',
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }

@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  metadataBase: new URL("https://humanize-ai-chi.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL),
   title: {
     default: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
     template: "%s | Humanizer AI",
@@ -20,7 +20,7 @@ export const metadata = {
     "AI writing humanizer",
     "free AI humanizer",
   ],
-  authors: [{ name: "Humanizer AI", url: "https://humanize-ai-chi.vercel.app" }],
+  authors: [{ name: "Humanizer AI", url: process.env.NEXT_PUBLIC_SITE_URL }],
   creator: "Humanizer AI",
   publisher: "Humanizer AI",
   robots: {

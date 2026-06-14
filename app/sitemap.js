@@ -1,7 +1,8 @@
 export default function sitemap() {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
   return [
     {
-      url: 'https://humanize-ai-chi.vercel.app',
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,

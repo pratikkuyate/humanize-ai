@@ -1,16 +1,18 @@
 import HumanizerTool from "@/components/HumanizerTool";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
 export const metadata = {
   title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
   description:
     "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
-  alternates: { canonical: "https://humanize-ai-chi.vercel.app/" },
+  alternates: { canonical: `${siteUrl}/` },
   openGraph: {
     title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
     description:
       "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click.",
     type: "website",
-    url: "https://humanize-ai-chi.vercel.app/",
+    url: `${siteUrl}/`,
     siteName: "Humanizer AI",
     locale: "en_US",
     images: [
@@ -171,7 +173,7 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Humanizer AI",
-  url: "https://humanize-ai-chi.vercel.app/",
+  url: `${siteUrl}/`,
   description:
     "Free AI humanizer that rewrites AI-generated text from ChatGPT, Claude, Gemini, and other models into natural, human-sounding writing.",
   inLanguage: "en-US",
@@ -181,8 +183,8 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Humanizer AI",
-  url: "https://humanize-ai-chi.vercel.app/",
-  logo: "https://humanize-ai-chi.vercel.app/icon.svg",
+  url: `${siteUrl}/`,
+  logo: `${siteUrl}/icon.svg`,
   description:
     "Free AI text humanizer tool — converts AI-generated content from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
 };
@@ -195,7 +197,7 @@ const breadcrumbJsonLd = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://humanize-ai-chi.vercel.app/",
+      item: `${siteUrl}/`,
     },
   ],
 };
