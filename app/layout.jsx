@@ -1,5 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL),
@@ -71,6 +73,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>{children}</body>
+      <Analytics />
+      <SpeedInsights />
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-GZEF2PGXC2"
         strategy="afterInteractive"
