@@ -64,6 +64,11 @@ export const metadata = {
     apple: "/icon.svg",
   },
   category: "technology",
+  verification: {
+    other: {
+      "msvalidate.01": "E34583B052A0EA4D5C1A62E0FAF8A855",
+    },
+  },
 };
 
 /**
