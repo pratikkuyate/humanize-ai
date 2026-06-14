@@ -20,9 +20,13 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for environments where clipboard API is restricted
+      // Fallback for environments where clipboard API is restricted.
+      // position:fixed + left:-9999px keeps the element out of the layout flow
+      // so appendChild/select don't trigger a visible forced reflow.
       const el = document.createElement("textarea");
       el.value = humanizedText;
+      el.setAttribute("readonly", "");
+      el.style.cssText = "position:fixed;left:-9999px;top:-9999px;opacity:0";
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");

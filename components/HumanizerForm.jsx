@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 const MIN_LENGTH = 50;
 const MAX_LENGTH = 20_000;
@@ -15,7 +15,6 @@ const MAX_LENGTH = 20_000;
 export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
-  const textareaRef = useRef(null);
 
   const charCount = text.length;
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -83,7 +82,6 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       {/* Textarea */}
       <div className="flex-1 relative">
         <textarea
-          ref={textareaRef}
           value={text}
           onChange={handleChange}
           onKeyDown={handleKeyDown}

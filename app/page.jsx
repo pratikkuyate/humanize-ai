@@ -10,6 +10,24 @@ export const metadata = {
     description:
       "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click.",
     type: "website",
+    url: "https://humanize-ai-chi.vercel.app/",
+    siteName: "Humanizer AI",
+    locale: "en_US",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Humanizer AI — Turn AI Text Into Natural Human Writing Free",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
+    description:
+      "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click.",
+    images: ["/opengraph-image"],
   },
 };
 
@@ -149,6 +167,39 @@ const softwareJsonLd = {
   ],
 };
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Humanizer AI",
+  url: "https://humanize-ai-chi.vercel.app/",
+  description:
+    "Free AI humanizer that rewrites AI-generated text from ChatGPT, Claude, Gemini, and other models into natural, human-sounding writing.",
+  inLanguage: "en-US",
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Humanizer AI",
+  url: "https://humanize-ai-chi.vercel.app/",
+  logo: "https://humanize-ai-chi.vercel.app/icon.svg",
+  description:
+    "Free AI text humanizer tool — converts AI-generated content from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://humanize-ai-chi.vercel.app/",
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -159,6 +210,18 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Sticky header */}
