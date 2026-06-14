@@ -87,7 +87,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
           onKeyDown={handleKeyDown}
           disabled={isLoading}
           placeholder="Paste your AI-generated content here..."
-          className={`w-full h-full min-h-[500px] resize-none p-5 text-sm leading-relaxed
+          className={`w-full h-full min-h-[300px] sm:min-h-[500px] resize-none p-5 text-sm leading-relaxed
             bg-transparent text-slate-700 dark:text-slate-300
             placeholder:text-slate-300 dark:placeholder:text-slate-600
             focus:outline-none transition-colors

@@ -1,4 +1,16 @@
-import HumanizerTool from "@/components/HumanizerTool";
+import dynamic from "next/dynamic";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
+import { H2, H3, P, UL } from "@/components/ProseHelpers";
+
+const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
+  loading: () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <div className="h-[440px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+      <div className="h-[440px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+    </div>
+  ),
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
@@ -227,30 +239,7 @@ export default function Home() {
       />
 
       {/* Sticky header */}
-      <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-sm">
-              <LogoIcon />
-            </div>
-            <div>
-              <p className="text-base font-bold text-slate-900 dark:text-white leading-none">
-                Humanizer AI
-              </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 leading-none mt-0.5 hidden sm:block">
-                Transform AI-generated text into natural, readable content.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-              3-Stage Pipeline
-            </span>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 text-center">
@@ -273,7 +262,10 @@ export default function Home() {
       </main>
 
       {/* Long-form SEO content */}
-      <div className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+      <div
+        className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800"
+        style={{ contentVisibility: "auto", containIntrinsicSize: "0 9000px" }}
+      >
         <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Section 1: Hero supporting content */}
           <section>
@@ -975,59 +967,11 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-center">
-          <p className="text-xs text-slate-400 dark:text-slate-600">
-            Humanizer AI — Writing enhancement and editing tool
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
 
-/** @param {{ children: React.ReactNode }} props */
-function H2({ children }) {
-  return (
-    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">
-      {children}
-    </h2>
-  );
-}
-
-/** @param {{ children: React.ReactNode }} props */
-function H3({ children }) {
-  return (
-    <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mt-8 mb-3">
-      {children}
-    </h3>
-  );
-}
-
-/** @param {{ children: React.ReactNode }} props */
-function P({ children }) {
-  return <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">{children}</p>;
-}
-
-/** @param {{ items: React.ReactNode[] }} props */
-function UL({ items }) {
-  return (
-    <ul className="list-disc pl-6 space-y-2 mb-4 text-slate-600 dark:text-slate-300 leading-relaxed">
-      {items.map((item, i) => (
-        <li key={i}>{item}</li>
-      ))}
-    </ul>
-  );
-}
-
-function LogoIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-      <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
-      <path d="M5 17l.75 2.25L8 20l-2.25.75L5 23l-.75-2.25L2 20l2.25-.75L5 17z" />
-    </svg>
-  );
-}
 
 function SparkleIcon() {
   return (
