@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
@@ -707,6 +708,9 @@ export default function Home() {
               (One honest note: always follow your school’s AI policy. This tool improves writing
               quality; it’s not a license to submit work that isn’t yours.)
             </P>
+            <Link href="/ai-humanizer-for/students" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for students →
+            </Link>
 
             <H3>Bloggers</H3>
             <P>
@@ -721,6 +725,9 @@ export default function Home() {
               transitions — so the blogger’s energy goes into the parts only they can write.
               Publishing three quality posts a week stops being a grind.
             </P>
+            <Link href="/ai-humanizer-for/bloggers" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for bloggers →
+            </Link>
 
             <H3>Content Writers</H3>
             <P>
@@ -763,6 +770,9 @@ export default function Home() {
               read. It’s the difference between content that ranks for a month and content that
               holds position.
             </P>
+            <Link href="/ai-humanizer-for/seo-writers" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for SEO writers →
+            </Link>
 
             <H3>Agencies</H3>
             <P>

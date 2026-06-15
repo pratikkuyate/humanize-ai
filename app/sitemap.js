@@ -1,3 +1,5 @@
+import { useCases } from "@/lib/useCases";
+
 export default function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
   return [
@@ -31,5 +33,11 @@ export default function sitemap() {
       changeFrequency: 'monthly',
       priority: 0.3,
     },
+    ...useCases.map((uc) => ({
+      url: `${baseUrl}/ai-humanizer-for/${uc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    })),
   ];
 }
