@@ -8,6 +8,19 @@ export const metadata = {
   description:
     "Humanizer AI terms of service. Understand the rules for using our free AI text humanizer tool powered by Google Gemini.",
   alternates: { canonical: `${siteUrl}/terms` },
+  openGraph: {
+    title: "Terms of Service — Simply Humanize",
+    description:
+      "Read our terms of service. Understand the rules for using the Simply Humanize free AI text humanizer tool.",
+    url: `${siteUrl}/terms`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service — Simply Humanize",
+    description:
+      "Read our terms of service. Understand the rules for using the Simply Humanize free AI text humanizer tool.",
+  },
 };
 
 export default function TermsPage() {

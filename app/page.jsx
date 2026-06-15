@@ -6,8 +6,8 @@ import { H2, H3, P, UL } from "@/components/ProseHelpers";
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-      <div className="h-[440px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
-      <div className="h-[440px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+      <div className="h-[428px] sm:h-[628px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+      <div className="h-[448px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
     </div>
   ),
 });

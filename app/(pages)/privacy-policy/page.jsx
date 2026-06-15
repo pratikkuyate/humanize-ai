@@ -8,6 +8,19 @@ export const metadata = {
   description:
     "Read the Humanizer AI privacy policy. Learn how we handle your text, what data we collect, and your rights when using our free AI text humanizer.",
   alternates: { canonical: `${siteUrl}/privacy-policy` },
+  openGraph: {
+    title: "Privacy Policy — Simply Humanize",
+    description:
+      "Read our privacy policy. Learn how Simply Humanize handles your text, what data we collect, and your rights.",
+    url: `${siteUrl}/privacy-policy`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy — Simply Humanize",
+    description:
+      "Read our privacy policy. Learn how Simply Humanize handles your text, what data we collect, and your rights.",
+  },
 };
 
 export default function PrivacyPolicyPage() {

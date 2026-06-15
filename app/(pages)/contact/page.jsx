@@ -7,6 +7,19 @@ export const metadata = {
   description:
     "Get in touch with the Humanizer AI team. We welcome questions, feedback, bug reports, and partnership inquiries.",
   alternates: { canonical: `${siteUrl}/contact` },
+  openGraph: {
+    title: "Contact Simply Humanize",
+    description:
+      "Get in touch with the Simply Humanize team. We welcome questions, feedback, bug reports, and partnership inquiries.",
+    url: `${siteUrl}/contact`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Simply Humanize",
+    description:
+      "Get in touch with the Simply Humanize team. We welcome questions, feedback, bug reports, and partnership inquiries.",
+  },
 };
 
 export default function ContactPage() {

@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com/"),
   title: {
     default: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
     template: "%s | Humanizer AI",
@@ -71,27 +71,30 @@ export const metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: "#6366f1",
+};
+
 /**
  * @param {{ children: React.ReactNode }} props
  */
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>{children}</body>
-      <Analytics />
-      <SpeedInsights />
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-GZEF2PGXC2"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
+      <body>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-GZEF2PGXC2" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-GZEF2PGXC2');
         `}
-      </Script>
+        </Script>
+      </body>
     </html>
   );
 }

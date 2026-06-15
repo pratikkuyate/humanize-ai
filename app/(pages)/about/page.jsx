@@ -8,6 +8,19 @@ export const metadata = {
   description:
     "Learn about Humanizer AI — a free tool that rewrites AI-generated text from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
   alternates: { canonical: `${siteUrl}/about` },
+  openGraph: {
+    title: "About Simply Humanize",
+    description:
+      "Learn about Simply Humanize — a free tool that rewrites AI-generated text from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
+    url: `${siteUrl}/about`,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Simply Humanize",
+    description:
+      "Learn about Simply Humanize — a free tool that rewrites AI-generated text from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
+  },
 };
 
 export default function AboutPage() {
