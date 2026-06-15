@@ -16,18 +16,15 @@ export default function ContactPage() {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
           Contact Us
         </h1>
-        <P>
-          We're a small team. The best way to reach us is by email — we read everything and reply
-          personally.
-        </P>
+        <P>We're a small team. The best way to reach us is by email — we read everything and reply personally.</P>
 
         <div className="my-8 rounded-xl border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/40 p-6">
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Email us at</p>
           <a
-            href="mailto:hello@humanizerai.net"
+            href="mailto:simplyhumanize@gmail.com"
             className="text-lg font-medium text-violet-700 dark:text-violet-300 hover:underline break-all"
           >
-            hello@humanizerai.net
+            simplyhumanize@gmail.com
           </a>
         </div>
 
@@ -43,9 +40,7 @@ export default function ContactPage() {
         />
 
         <H2>Response Time</H2>
-        <P>
-          We aim to respond within 2 business days. We appreciate your patience.
-        </P>
+        <P>We aim to respond within 2 business days. We appreciate your patience.</P>
       </article>
     </div>
   );

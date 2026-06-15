@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
 
         <H2>Overview</H2>
         <P>
-          Humanizer AI is built to be simple and private by design. This policy explains what happens
+          Simply Humanize is built to be simple and private by design. This policy explains what happens
           to the text you submit and how we operate the service. We do not require an account, we do
           not sell your data, and we do not retain the text you paste into the tool.
         </P>
@@ -56,7 +56,7 @@ export default function PrivacyPolicyPage() {
 
         <H2>No Accounts, No Profiles</H2>
         <P>
-          No registration is required to use Humanizer AI. We do not collect your name, email
+          No registration is required to use Simply Humanize. We do not collect your name, email
           address, or any payment information on the free tier. We do not build profiles of users.
         </P>
 
@@ -95,7 +95,7 @@ export default function PrivacyPolicyPage() {
 
         <H2>Children's Privacy</H2>
         <P>
-          Humanizer AI is not directed at children under 13. We do not knowingly collect personal
+          Simply Humanize is not directed at children under 13. We do not knowingly collect personal
           information from children.
         </P>
 

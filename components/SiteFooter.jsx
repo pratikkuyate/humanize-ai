@@ -12,7 +12,7 @@ export default function SiteFooter() {
     <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-xs text-slate-400 dark:text-slate-600">
-          Humanizer AI — Writing enhancement and editing tool
+          Simply Humanize — Writing enhancement and editing tool
         </p>
         <nav className="flex items-center flex-wrap justify-center gap-x-4 gap-y-1">
           {footerLinks.map((link) => (

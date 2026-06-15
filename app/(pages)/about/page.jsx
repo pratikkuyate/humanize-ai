@@ -15,19 +15,19 @@ export default function AboutPage() {
     <div className="bg-white dark:bg-slate-900 py-12 sm:py-16">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-10">
-          About Humanizer AI
+          About Simply Humanize
         </h1>
 
         <H2>Why We Built This</H2>
         <P>
           AI writing tools got very good at generating content. They didn't get good at sounding
           human. The sentences are grammatically correct but rhythmically flat — predictable pacing,
-          overused phrases, no natural variation. Humanizer AI exists to fix that missing step.
+          overused phrases, no natural variation. Simply Humanize exists to fix that missing step.
         </P>
 
         <H2>The 3-Stage Pipeline</H2>
         <P>
-          Most rewriters swap synonyms. We don't. Humanizer AI runs submitted text through a
+          Most rewriters swap synonyms. We don't. Simply Humanize runs submitted text through a
           three-stage process: first analyzing structure and tone, then rewriting for natural rhythm
           and voice, then polishing for flow and coherence. The result reads like a person wrote it
           — because the process mirrors how a skilled editor thinks.
@@ -43,14 +43,14 @@ export default function AboutPage() {
         <H2>What We Believe</H2>
         <P>
           AI is a writing tool, not a replacement for voice. Humanizing your content isn't cheating
-          — it's editing. Every good writer revises; Humanizer AI gives you a head start. We also
+          — it's editing. Every good writer revises; Simply Humanize gives you a head start. We also
           believe in transparency: we tell you exactly what the tool does and doesn't do, and we
           don't make promises about AI detection bypass or factual accuracy.
         </P>
 
         <H2>Free to Use</H2>
         <P>
-          Humanizer AI is free. No subscription, no account, no credit card. Paste your text and
+          Simply Humanize is free. No subscription, no account, no credit card. Paste your text and
           get results instantly.
         </P>
 

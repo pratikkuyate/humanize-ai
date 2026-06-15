@@ -19,7 +19,7 @@ export default function SiteHeader() {
           </div>
           <div>
             <p className="text-base font-bold text-slate-900 dark:text-white leading-none">
-              Humanizer AI
+              Simply Humanize
             </p>
             <p className="text-xs text-slate-400 dark:text-slate-500 leading-none mt-0.5 hidden sm:block">
               Transform AI-generated text into natural, readable content.

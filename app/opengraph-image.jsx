@@ -53,7 +53,7 @@ export default function Image() {
               letterSpacing: '-0.5px',
             }}
           >
-            Humanizer AI
+            Simply Humanize
           </span>
         </div>
 

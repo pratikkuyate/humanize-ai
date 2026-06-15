@@ -1,7 +1,7 @@
 export default function manifest() {
   return {
-    name: 'Humanizer AI — AI Text Humanizer Free',
-    short_name: 'Humanizer AI',
+    name: 'Simply Humanize — AI Text Humanizer Free',
+    short_name: 'Simply Humanize',
     description:
       'Humanize AI text online free. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.',
     start_url: '/',

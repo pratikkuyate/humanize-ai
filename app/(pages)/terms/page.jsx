@@ -23,19 +23,19 @@ export default function TermsPage() {
 
         <H2>Acceptance of Terms</H2>
         <P>
-          By accessing or using Humanizer AI, you agree to be bound by these Terms of Service. If
+          By accessing or using Simply Humanize, you agree to be bound by these Terms of Service. If
           you do not agree, please do not use the service.
         </P>
 
         <H2>The Service</H2>
         <P>
-          Humanizer AI is a web-based tool that rewrites AI-generated text into natural,
+          Simply Humanize is a web-based tool that rewrites AI-generated text into natural,
           human-sounding writing using the Google Gemini API. The service is offered free of charge
           with no guarantee of uptime, availability, or service level.
         </P>
 
         <H2>Acceptable Use</H2>
-        <P>You agree not to use Humanizer AI to:</P>
+        <P>You agree not to use Simply Humanize to:</P>
         <UL
           items={[
             "Submit content that is illegal, defamatory, harassing, or infringes on third-party intellectual property rights.",
@@ -51,18 +51,18 @@ export default function TermsPage() {
         <H2>Intellectual Property</H2>
         <H3>Your content</H3>
         <P>
-          You retain full ownership of any text you submit to Humanizer AI. We make no claim over
+          You retain full ownership of any text you submit to Simply Humanize. We make no claim over
           your input or the rewritten output returned to you.
         </P>
         <H3>Our property</H3>
         <P>
-          The Humanizer AI brand, logo, website design, and underlying software are our property and
+          The Simply Humanize brand, logo, website design, and underlying software are our property and
           may not be reproduced or used without permission.
         </P>
 
         <H2>AI Output Disclaimer</H2>
         <P>
-          Humanizer AI rewrites text using a large language model. The output is generated
+          Simply Humanize rewrites text using a large language model. The output is generated
           automatically and may contain inaccuracies, omissions, or unintended changes in meaning.
           You are responsible for reviewing all output before publishing or using it. We do not
           guarantee that rewritten content will bypass AI detection tools or be factually accurate.
@@ -84,7 +84,7 @@ export default function TermsPage() {
 
         <H2>Limitation of Liability</H2>
         <P>
-          To the fullest extent permitted by law, Humanizer AI shall not be liable for any indirect,
+          To the fullest extent permitted by law, Simply Humanize shall not be liable for any indirect,
           incidental, special, consequential, or punitive damages arising from your use of, or
           inability to use, the service.
         </P>
