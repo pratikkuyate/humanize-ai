@@ -1,4 +1,5 @@
 import { useCases } from "@/lib/useCases";
+import { aiModels } from "@/lib/aiModels";
 
 export default function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -41,6 +42,12 @@ export default function sitemap() {
     },
     ...useCases.map((uc) => ({
       url: `${baseUrl}/ai-humanizer-for/${uc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    })),
+    ...aiModels.map((m) => ({
+      url: `${baseUrl}${m.urlPath}`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,

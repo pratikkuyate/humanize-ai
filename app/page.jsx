@@ -938,6 +938,19 @@ export default function Home() {
                   <p className="mt-3 text-slate-600 dark:text-slate-300 leading-relaxed">
                     {faq.answer}
                   </p>
+                  {faq.question === "Can I humanize ChatGPT content specifically?" && (
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <Link href="/humanize-chatgpt-text" className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline">
+                        Humanize ChatGPT text →
+                      </Link>
+                      <Link href="/humanize-claude-text" className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline">
+                        Humanize Claude text →
+                      </Link>
+                      <Link href="/humanize-gemini-text" className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline">
+                        Humanize Gemini text →
+                      </Link>
+                    </div>
+                  )}
                 </details>
               ))}
             </div>
