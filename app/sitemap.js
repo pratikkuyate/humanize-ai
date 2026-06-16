@@ -33,6 +33,12 @@ export default function sitemap() {
       changeFrequency: 'monthly',
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/use-cases`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
     ...useCases.map((uc) => ({
       url: `${baseUrl}/ai-humanizer-for/${uc.slug}`,
       lastModified: new Date(),

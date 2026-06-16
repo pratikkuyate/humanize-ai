@@ -741,6 +741,9 @@ export default function Home() {
               Deadlines stop being scary. For freelancers paid per project, that math changes
               everything.
             </P>
+            <Link href="/ai-humanizer-for/content-writers" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for content writers →
+            </Link>
 
             <H3>Marketers</H3>
             <P>
@@ -754,6 +757,9 @@ export default function Home() {
               When your email open rates depend on sounding like a human reaching out — not a
               sequence firing — this step pays for itself with the first campaign.
             </P>
+            <Link href="/ai-humanizer-for/marketers" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for marketers →
+            </Link>
 
             <H3>SEO Professionals</H3>
             <P>
@@ -787,6 +793,9 @@ export default function Home() {
               content that smells machine-made — which, for an agency, is a reputation-level risk
               worth eliminating.
             </P>
+            <Link href="/ai-humanizer-for/agencies" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for content agencies →
+            </Link>
 
             <H3>Businesses</H3>
             <P>
@@ -801,6 +810,9 @@ export default function Home() {
               warmth defuses frustration better than templated text ever will. Small change in
               process, real change in how the company comes across.
             </P>
+            <Link href="/ai-humanizer-for/businesses" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
+              AI humanizer for business writing →
+            </Link>
 
             <H3>The Common Thread</H3>
             <P>

@@ -162,8 +162,44 @@ export default async function UseCasePage({ params }) {
             </div>
           </div>
 
+          {/* Sibling use cases */}
+          {(() => {
+            const siblings = useCases.filter((u) => u.slug !== uc.slug).slice(0, 3);
+            return (
+              <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+                <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
+                  More use cases
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {siblings.map((s) => (
+                    <Link
+                      key={s.slug}
+                      href={`/ai-humanizer-for/${s.slug}`}
+                      className="group rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-violet-400 dark:hover:border-violet-500 transition-colors"
+                    >
+                      <p className="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                        {s.h1}
+                      </p>
+                      <p className="text-violet-600 dark:text-violet-400 mt-1 text-xs">
+                        Learn more →
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-3">
+                  <Link
+                    href="/use-cases"
+                    className="text-sm text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
+                    View all use cases →
+                  </Link>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* CTA */}
-          <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
+          <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
             <Link
               href="/"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm"
