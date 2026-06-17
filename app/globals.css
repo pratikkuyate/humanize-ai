@@ -20,6 +20,38 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Attention pulse for the "Try a sample" button — a breathing scale plus an
+   expanding violet ring over a constant soft glow halo, so it clearly grabs the
+   eye while the input is empty. Doesn't touch opacity, so it never reads as
+   disabled. */
+@keyframes attention-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.6),
+      0 0 12px 2px rgba(139, 92, 246, 0.35);
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0),
+      0 0 20px 5px rgba(139, 92, 246, 0.55);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0),
+      0 0 12px 2px rgba(139, 92, 246, 0.35);
+  }
+}
+
+.animate-attention {
+  animation: attention-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-attention {
+    animation: none;
+  }
+}
+
 /* Smooth scrollbar for Firefox */
 * {
   scrollbar-width: thin;
