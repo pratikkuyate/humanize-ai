@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useCases } from "@/lib/useCases";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
@@ -30,6 +31,7 @@ export default function UseCasesHubPage() {
 
         {/* Header */}
         <div className="max-w-3xl mb-12">
+          <Breadcrumbs crumbs={[{ label: "Home", href: "/" }, { label: "Use Cases" }]} />
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
             Who Uses an AI Text Humanizer?
           </h1>

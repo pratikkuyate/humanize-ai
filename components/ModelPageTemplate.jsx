@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { aiModels } from "@/lib/aiModels";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
@@ -58,13 +59,10 @@ export default function ModelPageTemplate({ model }) {
       {/* Hero */}
       <section className="bg-gradient-to-b from-violet-50 to-white dark:from-slate-900 dark:to-slate-950 py-12 sm:py-16 border-b border-slate-200 dark:border-slate-800">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="text-sm text-slate-400 dark:text-slate-500 mb-6">
-            <Link href="/" className="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-slate-600 dark:text-slate-300">{model.h1}</span>
-          </nav>
+          <Breadcrumbs crumbs={[
+            { label: "Home", href: "/" },
+            { label: model.h1 },
+          ]} />
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6">
             {model.h1}
           </h1>

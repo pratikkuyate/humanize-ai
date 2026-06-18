@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
@@ -27,6 +28,7 @@ export default function TermsPage() {
   return (
     <div className="bg-white dark:bg-slate-900 py-12 sm:py-16">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs crumbs={[{ label: "Home", href: "/" }, { label: "Terms of Service" }]} />
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
           Terms of Service
         </h1>
