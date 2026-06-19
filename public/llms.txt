@@ -1,0 +1,45 @@
+# Simply Humanize — AI Humanizer
+
+> Simply Humanize is a free online AI humanizer that rewrites AI-generated text from
+> ChatGPT, Claude, Gemini, and other models into natural, human-sounding writing in
+> seconds. It removes machine-writing patterns (uniform sentence length, repetitive
+> transitions, stiff vocabulary, filler) while preserving meaning and SEO keywords.
+> No sign-up or credit card required to try it.
+
+Key facts:
+- Free tier with a generous per-request word limit; paid plans add higher limits,
+  batch processing, more styles, and priority speed.
+- Selectable writing styles: casual, professional, friendly, confident, academic.
+- Side-by-side original vs. humanized output; re-run for fresh variations.
+- Includes grammar/clarity cleanup and readability tuning (targets grade 7–9).
+- Best results in English; partial support for major languages (Spanish, French,
+  German, Portuguese).
+- Pasted text is processed to generate output and is not used to train public models.
+
+## Main pages
+- [Home / AI Humanizer tool](https://simplyhumanize.com/): Paste AI text and get natural, human-sounding writing in one click. Includes how-it-works, features, and FAQ.
+- [Use cases](https://simplyhumanize.com/use-cases): Overview of who uses the humanizer and how.
+- [About](https://simplyhumanize.com/about): What the tool does and how it works.
+- [Contact](https://simplyhumanize.com/contact): Get in touch.
+
+## Humanize by AI model
+- [Humanize ChatGPT text](https://simplyhumanize.com/humanize-chatgpt-text): Rewrite ChatGPT/GPT-4/GPT-4o output into natural writing; removes ChatGPT's signature patterns.
+- [Humanize Claude text](https://simplyhumanize.com/humanize-claude-text): Rewrite Anthropic Claude output (Claude 3, 3.5 Sonnet) into natural, expert-sounding writing.
+- [Humanize Gemini text](https://simplyhumanize.com/humanize-gemini-text): Rewrite Google Gemini output (1.5, 2.0) into natural prose, removing the structured AI sound.
+
+## Humanize by use case
+- [For students](https://simplyhumanize.com/ai-humanizer-for/students): Humanize AI-assisted essays, assignments, and research drafts (follow your school's AI policy).
+- [For bloggers](https://simplyhumanize.com/ai-humanizer-for/bloggers): Keep your voice at scale and publish faster.
+- [For SEO writers](https://simplyhumanize.com/ai-humanizer-for/seo-writers): People-first content that keeps keywords and improves engagement signals.
+- [For essays](https://simplyhumanize.com/ai-humanizer-for/essays): Make an AI essay draft sound like you while preserving the argument.
+- [For content writers](https://simplyhumanize.com/ai-humanizer-for/content-writers): Write more, edit less; humanize client drafts in seconds.
+- [For marketers](https://simplyhumanize.com/ai-humanizer-for/marketers): Email, landing page, and ad copy that converts.
+- [For agencies](https://simplyhumanize.com/ai-humanizer-for/agencies): Scale across multiple client brand voices without editing bottlenecks.
+- [For businesses](https://simplyhumanize.com/ai-humanizer-for/businesses): Professional proposals, reports, and emails that sound human.
+
+## Legal
+- [Privacy Policy](https://simplyhumanize.com/privacy-policy): How content and data are handled.
+- [Terms of Service](https://simplyhumanize.com/terms): Terms for using the tool.
+
+## Optional
+- [Sitemap](https://simplyhumanize.com/sitemap.xml): Full list of indexed URLs.
