@@ -8,6 +8,12 @@ const pageLinks = [
   { label: "Terms of Service", href: "/terms" },
 ];
 
+const toolLinks = [
+  { label: "AI Content Detector", href: "/tools/ai-content-detector" },
+  { label: "AI Text Humanizer", href: "/#tool" },
+  { label: "All Free Tools", href: "/tools" },
+];
+
 const modelLinks = [
   { label: "Humanize ChatGPT text", href: "/humanize-chatgpt-text" },
   { label: "Humanize Claude text", href: "/humanize-claude-text" },
@@ -40,6 +46,20 @@ export default function SiteFooter() {
             </p>
             <nav className="flex flex-col gap-1.5">
               {pageLinks.map((link) => (
+                <Link key={link.href} href={link.href} className={linkClass}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Free tools */}
+          <div>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+              Free tools
+            </p>
+            <nav className="flex flex-col gap-1.5">
+              {toolLinks.map((link) => (
                 <Link key={link.href} href={link.href} className={linkClass}>
                   {link.label}
                 </Link>

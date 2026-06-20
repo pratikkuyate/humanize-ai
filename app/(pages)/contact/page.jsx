@@ -1,7 +1,7 @@
 import { H2, P, UL } from "@/components/ProseHelpers";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
 export const metadata = {
   title: "Contact Us",

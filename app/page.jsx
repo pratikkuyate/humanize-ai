@@ -13,7 +13,7 @@ const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   ),
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
 export const metadata = {
   title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
@@ -344,7 +344,15 @@ export default function Home() {
               <strong>It detects AI writing patterns.</strong> Large language models have habits.
               They favor certain transition words (“moreover,” “furthermore,” “additionally”). They
               produce sentences with suspiciously uniform length and rhythm. They overuse hedging
-              phrases and formal connectors. The humanizer identifies these fingerprints first.
+              phrases and formal connectors. The humanizer identifies these fingerprints first. You
+              can see these same patterns scored on your own writing with our free{" "}
+              <Link
+                href="/tools/ai-content-detector"
+                className="text-violet-600 dark:text-violet-400 hover:underline font-medium"
+              >
+                AI content detector
+              </Link>
+              .
             </P>
             <P>
               <strong>It restructures sentences.</strong> Human writing has texture. We write a

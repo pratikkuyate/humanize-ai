@@ -29,6 +29,12 @@ export default function SiteHeader() {
 
         <nav className="flex items-center gap-1 sm:gap-4">
           <Link
+            href="/tools"
+            className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors px-2 py-1"
+          >
+            Tools
+          </Link>
+          <Link
             href="/use-cases"
             className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors px-2 py-1"
           >

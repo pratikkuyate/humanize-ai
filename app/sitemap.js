@@ -2,7 +2,7 @@ import { useCases } from "@/lib/useCases";
 import { aiModels } from "@/lib/aiModels";
 
 export default function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
   return [
     {
       url: baseUrl,
@@ -39,6 +39,18 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/tools`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/tools/ai-content-detector`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     ...useCases.map((uc) => ({
       url: `${baseUrl}/ai-humanizer-for/${uc.slug}`,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MIN_LENGTH = 50;
 const MAX_LENGTH = 20_000;
@@ -30,6 +30,17 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const sampleIndexRef = useRef(0);
+
+  // One-time hand-off from the AI detector ("Humanize it" CTA): pre-fill the box.
+  useEffect(() => {
+    try {
+      const prefill = sessionStorage.getItem("humanize_prefill");
+      if (prefill) {
+        setText(prefill);
+        sessionStorage.removeItem("humanize_prefill");
+      }
+    } catch {}
+  }, []);
 
   const charCount = text.length;
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
