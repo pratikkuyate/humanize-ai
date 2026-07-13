@@ -7,7 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com"
 export const metadata = {
   title: "Terms of Service",
   description:
-    "Humanizer AI terms of service. Understand the rules for using our free AI text humanizer tool powered by Google Gemini.",
+    "Simply Humanize terms of service. Understand the rules for using our free AI text humanizer tool powered by Google Gemini.",
   alternates: { canonical: `${siteUrl}/terms` },
   openGraph: {
     title: "Terms of Service — Simply Humanize",
