@@ -202,19 +202,6 @@ const organizationJsonLd = {
     "Free AI text humanizer tool — converts AI-generated content from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
 };
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${siteUrl}/`,
-    },
-  ],
-};
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -233,10 +220,6 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Sticky header */}
