@@ -22,6 +22,10 @@ Key facts:
 - [About](https://simplyhumanize.com/about): What the tool does and how it works.
 - [Contact](https://simplyhumanize.com/contact): Get in touch.
 
+## Free tools
+- [AI Content Detector](https://simplyhumanize.com/tools/ai-content-detector): Free browser-based detector that scores text for six AI writing patterns (sentence uniformity, clichés, hedging, passive voice, repeated openers) with a transparent per-signal breakdown. Nothing is uploaded.
+- [All free tools](https://simplyhumanize.com/tools): Directory of Simply Humanize's free AI writing tools.
+
 ## Humanize by AI model
 - [Humanize ChatGPT text](https://simplyhumanize.com/humanize-chatgpt-text): Rewrite ChatGPT/GPT-4/GPT-4o output into natural writing; removes ChatGPT's signature patterns.
 - [Humanize Claude text](https://simplyhumanize.com/humanize-claude-text): Rewrite Anthropic Claude output (Claude 3, 3.5 Sonnet) into natural, expert-sounding writing.
