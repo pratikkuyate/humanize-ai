@@ -7,7 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com"
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "Read the Humanizer AI privacy policy. Learn how we handle your text, what data we collect, and your rights when using our free AI text humanizer.",
+    "Read the Simply Humanize privacy policy. Learn how we handle your text, what data we collect, and your rights when using our free AI text humanizer.",
   alternates: { canonical: `${siteUrl}/privacy-policy` },
   openGraph: {
     title: "Privacy Policy — Simply Humanize",
