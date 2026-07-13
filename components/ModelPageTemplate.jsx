@@ -3,8 +3,6 @@ import Link from "next/link";
 import { aiModels } from "@/lib/aiModels";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
-
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -26,22 +24,6 @@ function buildFaqSchema(model) {
   };
 }
 
-function buildBreadcrumbSchema(model) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: model.h1,
-        item: `${siteUrl}${model.urlPath}`,
-      },
-    ],
-  };
-}
-
 export default function ModelPageTemplate({ model }) {
   const siblings = aiModels.filter((m) => m.slug !== model.slug);
 
@@ -50,10 +32,6 @@ export default function ModelPageTemplate({ model }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFaqSchema(model)) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbSchema(model)) }}
       />
 
       {/* Hero */}
