@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com"
 export const metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with the Humanizer AI team. We welcome questions, feedback, bug reports, and partnership inquiries.",
+    "Get in touch with the Simply Humanize team. We welcome questions, feedback, bug reports, and partnership inquiries.",
   alternates: { canonical: `${siteUrl}/contact` },
   openGraph: {
     title: "Contact Simply Humanize",
