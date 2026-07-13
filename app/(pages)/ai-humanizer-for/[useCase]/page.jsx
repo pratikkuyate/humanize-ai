@@ -53,23 +53,6 @@ function buildFaqSchema(uc) {
   };
 }
 
-function buildBreadcrumbSchema(uc) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-      { "@type": "ListItem", position: 2, name: "Use Cases", item: `${siteUrl}/use-cases` },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: uc.h1,
-        item: `${siteUrl}/ai-humanizer-for/${uc.slug}`,
-      },
-    ],
-  };
-}
-
 export default async function UseCasePage({ params }) {
   const { useCase } = await params;
   const uc = useCases.find((u) => u.slug === useCase);
@@ -80,10 +63,6 @@ export default async function UseCasePage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFaqSchema(uc)) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbSchema(uc)) }}
       />
 
       {/* Hero */}
