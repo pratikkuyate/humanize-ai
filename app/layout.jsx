@@ -6,8 +6,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com/"),
   title: {
-    default: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
-    template: "%s | Humanizer AI",
+    default: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
+    template: "%s | Simply Humanize",
   },
   description:
     "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
@@ -23,9 +23,9 @@ export const metadata = {
     "AI writing humanizer",
     "free AI humanizer",
   ],
-  authors: [{ name: "Humanizer AI", url: process.env.NEXT_PUBLIC_SITE_URL }],
-  creator: "Humanizer AI",
-  publisher: "Humanizer AI",
+  authors: [{ name: "Simply Humanize", url: process.env.NEXT_PUBLIC_SITE_URL }],
+  creator: "Simply Humanize",
+  publisher: "Simply Humanize",
   robots: {
     index: true,
     follow: true,
@@ -42,13 +42,13 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "Humanizer AI",
+    siteName: "Simply Humanize",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Humanizer AI — Turn AI Text Into Natural Human Writing Free",
+        alt: "Simply Humanize — Turn AI Text Into Natural Human Writing Free",
       },
     ],
   },
