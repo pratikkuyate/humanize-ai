@@ -5,9 +5,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
 export const metadata = {
-  title: "About Humanizer AI",
+  title: "About Simply Humanize",
   description:
-    "Learn about Humanizer AI — a free tool that rewrites AI-generated text from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
+    "Learn about Simply Humanize — a free tool that rewrites AI-generated text from ChatGPT, Claude, and Gemini into natural, human-sounding writing.",
   alternates: { canonical: `${siteUrl}/about` },
   openGraph: {
     title: "About Simply Humanize",
