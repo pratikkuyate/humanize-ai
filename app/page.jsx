@@ -16,30 +16,30 @@ const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
 export const metadata = {
-  title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
+  title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
   description:
     "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
   alternates: { canonical: `${siteUrl}/` },
   openGraph: {
-    title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
+    title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
     description:
       "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click.",
     type: "website",
     url: `${siteUrl}/`,
-    siteName: "Humanizer AI",
+    siteName: "Simply Humanize",
     locale: "en_US",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Humanizer AI — Turn AI Text Into Natural Human Writing Free",
+        alt: "Simply Humanize — Turn AI Text Into Natural Human Writing Free",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Humanizer — Humanize AI Text Free | Humanizer AI",
+    title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
     description:
       "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click.",
     images: ["/opengraph-image"],
@@ -162,7 +162,7 @@ const faqJsonLd = {
 const softwareJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Humanizer AI",
+  name: "Simply Humanize",
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Web",
   description:
@@ -185,7 +185,7 @@ const softwareJsonLd = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Humanizer AI",
+  name: "Simply Humanize",
   url: `${siteUrl}/`,
   description:
     "Free AI humanizer that rewrites AI-generated text from ChatGPT, Claude, Gemini, and other models into natural, human-sounding writing.",
@@ -195,7 +195,7 @@ const websiteJsonLd = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Humanizer AI",
+  name: "Simply Humanize",
   url: `${siteUrl}/`,
   logo: `${siteUrl}/icon.svg`,
   description:
