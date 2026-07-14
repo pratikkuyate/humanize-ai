@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { humanizeText } from "@/lib/gemini";
+import { SUPPORTED_LANGUAGES } from "@/lib/languageRules";
 
 const MIN_LENGTH = 50;
 const MAX_LENGTH = 20_000;
 
 /**
  * POST /api/humanize
- * Body: { text: string }
+ * Body: { text: string; language?: "en" | "es" | "fr" | "de" | "pt" }
  */
 export async function POST(request) {
   let body;
@@ -20,11 +21,21 @@ export async function POST(request) {
     );
   }
 
-  const { text } = body ?? {};
+  const { text, language = "en" } = body ?? {};
 
   if (!text || typeof text !== "string") {
     return NextResponse.json(
       { success: false, error: "The 'text' field is required." },
+      { status: 400 }
+    );
+  }
+
+  if (typeof language !== "string" || !SUPPORTED_LANGUAGES.includes(language)) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Unsupported language. Supported: ${SUPPORTED_LANGUAGES.join(", ")}.`,
+      },
       { status: 400 }
     );
   }
@@ -52,7 +63,7 @@ export async function POST(request) {
   }
 
   try {
-    const { humanizedText, metadata } = await humanizeText(trimmed);
+    const { humanizedText, metadata } = await humanizeText(trimmed, language);
 
     return NextResponse.json({
       success: true,

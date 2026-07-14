@@ -3,6 +3,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
+import { languageAlternates } from "@/lib/languages";
 
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
@@ -19,7 +20,10 @@ export const metadata = {
   title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
   description:
     "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
-  alternates: { canonical: `${siteUrl}/` },
+  alternates: {
+    canonical: `${siteUrl}/`,
+    languages: languageAlternates(siteUrl),
+  },
   openGraph: {
     title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
     description:
@@ -115,7 +119,7 @@ const faqs = [
   {
     question: "Does humanizing work for non-English content?",
     answer:
-      "The tool performs best on English text, where its pattern detection is strongest. Support for major languages like Spanish, French, German, and Portuguese is available, with quality strongest in widely written languages. If you work in another language, run a free test on a real sample — you’ll see the quality immediately and can judge whether it meets your bar. Language coverage expands regularly, so check the supported languages list for the current lineup.",
+      "Yes — Spanish, French, German, and Portuguese each have a dedicated page (at /es, /fr, /de, and /pt) where the tool applies rewrite rules built for that language: its own AI-typical transitions, vocabulary, and phrasing patterns, not translated English rules. Your text is never translated; it goes in and comes out in the same language, variant, and register. English remains the most deeply tuned. If you write in one of these languages, run a free test on a real sample from the matching page and judge the quality yourself.",
   },
   {
     question: "Will my SEO keywords survive the rewrite?",

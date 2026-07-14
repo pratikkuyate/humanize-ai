@@ -5,7 +5,29 @@ import HumanizerForm from "@/components/HumanizerForm";
 import HumanizedOutput from "@/components/HumanizedOutput";
 import StatsPanel from "@/components/StatsPanel";
 
-export default function HumanizerTool() {
+const DEFAULT_CHIPS = [
+  "Sentence variety",
+  "Natural flow",
+  "Tone improvement",
+  "Repetition removal",
+  "Rhythm & pacing",
+  "Editorial polish",
+];
+
+/**
+ * @param {{
+ *   language?: string;
+ *   ui?: {
+ *     form?: object;
+ *     output?: object;
+ *     stats?: object;
+ *     chips?: string[];
+ *   };
+ *   samples?: string[];
+ * }} props `language`/`ui`/`samples` are set by the language landing pages
+ *   (lib/languages.js); every existing page renders the English defaults.
+ */
+export default function HumanizerTool({ language = "en", ui, samples }) {
   /** @type {[string | null, React.Dispatch<React.SetStateAction<string | null>>]} */
   const [humanizedText, setHumanizedText] = useState(null);
 
@@ -34,8 +56,11 @@ export default function HumanizerTool() {
             onResult={handleResult}
             onLoadingChange={setIsLoading}
             isLoading={isLoading}
+            language={language}
+            ui={ui?.form}
+            samples={samples}
           />
-          <StatsPanel metadata={metadata} />
+          <StatsPanel metadata={metadata} ui={ui?.stats} />
         </div>
 
         {/* Right column */}
@@ -44,6 +69,7 @@ export default function HumanizerTool() {
             humanizedText={humanizedText}
             isLoading={isLoading}
             onClear={handleClear}
+            ui={ui?.output}
           />
         </div>
       </div>
@@ -51,14 +77,7 @@ export default function HumanizerTool() {
       {/* Feature chips */}
       {!humanizedText && !isLoading && (
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          {[
-            "Sentence variety",
-            "Natural flow",
-            "Tone improvement",
-            "Repetition removal",
-            "Rhythm & pacing",
-            "Editorial polish",
-          ].map((feature) => (
+          {(ui?.chips ?? DEFAULT_CHIPS).map((feature) => (
             <span
               key={feature}
               className="px-3 py-1.5 rounded-full text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 shadow-sm"

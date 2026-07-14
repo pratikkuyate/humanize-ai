@@ -19,17 +19,44 @@ const SAMPLE_TEXTS = [
   `Maintaining a healthy lifestyle is of paramount importance in our modern society. It is widely acknowledged that regular physical activity, combined with a balanced diet, contributes significantly to overall well-being. Furthermore, adequate sleep and effective stress management are crucial factors that should not be overlooked. By making conscious choices and adopting sustainable habits, individuals can enhance their quality of life. In essence, prioritizing one's health is an investment that yields invaluable returns in the long run.`,
 ];
 
+/** English defaults; language pages override via the `ui` prop. */
+const DEFAULT_UI = {
+  header: "AI Generated Content",
+  sampleButton: "Try a sample",
+  ctrlHint: "Ctrl+Enter to submit",
+  placeholder: "Paste your AI-generated content here...",
+  charsLabel: "chars",
+  wordsLabel: "words",
+  submit: "Humanize Content",
+  submitting: "Humanizing...",
+  tooShort: `Please enter at least ${MIN_LENGTH} characters.`,
+  networkError: "Network error. Please check your connection and try again.",
+  unexpectedError: "An unexpected error occurred.",
+};
+
 /**
  * @param {{
  *   onResult: (result: { humanizedText: string; metadata: import('../lib/types.js').Stage1Metadata }) => void;
  *   onLoadingChange: (loading: boolean) => void;
  *   isLoading: boolean;
+ *   language?: string;
+ *   ui?: Partial<typeof DEFAULT_UI>;
+ *   samples?: string[];
  * }} props
  */
-export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) {
+export default function HumanizerForm({
+  onResult,
+  onLoadingChange,
+  isLoading,
+  language = "en",
+  ui,
+  samples,
+}) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const sampleIndexRef = useRef(0);
+  const t = { ...DEFAULT_UI, ...ui };
+  const sampleTexts = samples && samples.length > 0 ? samples : SAMPLE_TEXTS;
 
   // One-time hand-off from the AI detector ("Humanize it" CTA): pre-fill the box.
   useEffect(() => {
@@ -57,7 +84,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   /** Fill the textarea with a sample AI passage; cycles on repeat clicks. */
   function loadSample() {
     if (isLoading) return;
-    setText(SAMPLE_TEXTS[sampleIndexRef.current % SAMPLE_TEXTS.length]);
+    setText(sampleTexts[sampleIndexRef.current % sampleTexts.length]);
     sampleIndexRef.current += 1;
     if (error) setError("");
   }
@@ -71,19 +98,19 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       const response = await fetch("/api/humanize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, language }),
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        setError(data.error ?? "An unexpected error occurred.");
+        setError(data.error ?? t.unexpectedError);
         return;
       }
 
       onResult({ humanizedText: data.humanizedText, metadata: data.metadata });
     } catch {
-      setError("Network error. Please check your connection and try again.");
+      setError(t.networkError);
     } finally {
       onLoadingChange(false);
     }
@@ -105,7 +132,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-violet-500" />
           <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            AI Generated Content
+            {t.header}
           </h2>
         </div>
         <div className="flex items-center gap-3">
@@ -122,10 +149,10 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
               ${charCount === 0 && !isLoading ? "animate-attention" : ""}`}
           >
             <SparkleIcon />
-            Try a sample
+            {t.sampleButton}
           </button>
           <span className="hidden sm:inline text-xs text-slate-400 dark:text-slate-500">
-            Ctrl+Enter to submit
+            {t.ctrlHint}
           </span>
         </div>
       </div>
@@ -137,7 +164,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           disabled={isLoading}
-          placeholder="Paste your AI-generated content here..."
+          placeholder={t.placeholder}
           className={`w-full h-full min-h-[300px] sm:min-h-[500px] resize-none p-5 text-sm leading-relaxed
             bg-transparent text-slate-700 dark:text-slate-300
             placeholder:text-slate-300 dark:placeholder:text-slate-600
@@ -176,10 +203,10 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
               <span className="text-slate-300 dark:text-slate-600">
                 /{MAX_LENGTH.toLocaleString()}
               </span>{" "}
-              chars
+              {t.charsLabel}
             </span>
             <span className="text-slate-300 dark:text-slate-600">·</span>
-            <span>{wordCount.toLocaleString()} words</span>
+            <span>{wordCount.toLocaleString()} {t.wordsLabel}</span>
           </div>
 
           {/* Submit button */}
@@ -196,12 +223,12 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
             {isLoading ? (
               <>
                 <SpinnerIcon />
-                Humanizing...
+                {t.submitting}
               </>
             ) : (
               <>
                 <WandIcon />
-                Humanize Content
+                {t.submit}
               </>
             )}
           </button>
@@ -210,7 +237,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         {/* Hint when text is too short */}
         {isTooShort && !error && (
           <p className="text-xs text-amber-600 dark:text-amber-400">
-            Please enter at least {MIN_LENGTH} characters.
+            {t.tooShort}
           </p>
         )}
       </div>

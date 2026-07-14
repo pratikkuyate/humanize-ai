@@ -3,15 +3,31 @@
 import { useState } from "react";
 import LoadingState from "./LoadingState";
 
+/** English defaults; language pages override via the `ui` prop. */
+const DEFAULT_UI = {
+  header: "Humanized Content",
+  wordsLabel: "words",
+  copy: "Copy",
+  copied: "Copied!",
+  clear: "Clear",
+  emptyTitle: "Your humanized content will appear here",
+  // emptyBody stays null for English so the richer JSX default below renders.
+  emptyBody: null,
+  loadingTitle: undefined,
+  loadingSubtitle: undefined,
+};
+
 /**
  * @param {{
  *   humanizedText: string | null;
  *   isLoading: boolean;
  *   onClear: () => void;
+ *   ui?: Partial<typeof DEFAULT_UI>;
  * }} props
  */
-export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
+export default function HumanizedOutput({ humanizedText, isLoading, onClear, ui }) {
   const [copied, setCopied] = useState(false);
+  const t = { ...DEFAULT_UI, ...ui };
 
   async function handleCopy() {
     if (!humanizedText) return;
@@ -47,11 +63,11 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-500" />
           <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            Humanized Content
+            {t.header}
           </h2>
           {humanizedText && (
             <span className="text-xs text-slate-400 dark:text-slate-500">
-              {wordCount.toLocaleString()} words
+              {wordCount.toLocaleString()} {t.wordsLabel}
             </span>
           )}
         </div>
@@ -70,12 +86,12 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
             {copied ? (
               <>
                 <CheckIcon />
-                Copied!
+                {t.copied}
               </>
             ) : (
               <>
                 <CopyIcon />
-                Copy
+                {t.copy}
               </>
             )}
           </button>
@@ -91,7 +107,7 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
             title="Clear output"
           >
             <TrashIcon />
-            Clear
+            {t.clear}
           </button>
         </div>
       </div>
@@ -99,7 +115,7 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
       {/* Body */}
       <div className="flex-1 relative overflow-auto">
         {isLoading ? (
-          <LoadingState />
+          <LoadingState title={t.loadingTitle} subtitle={t.loadingSubtitle} />
         ) : humanizedText ? (
           <div className="p-5">
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
@@ -112,13 +128,19 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
               <SparkleIcon />
             </div>
             <p className="text-sm font-medium text-slate-400 dark:text-slate-500">
-              Your humanized content will appear here
+              {t.emptyTitle}
             </p>
-            <p className="text-xs text-slate-300 dark:text-slate-600 max-w-xs">
-              Paste AI-generated text on the left and click{" "}
-              <span className="text-violet-500 font-medium">Humanize Content</span> to
-              begin.
-            </p>
+            {t.emptyBody ? (
+              <p className="text-xs text-slate-300 dark:text-slate-600 max-w-xs">
+                {t.emptyBody}
+              </p>
+            ) : (
+              <p className="text-xs text-slate-300 dark:text-slate-600 max-w-xs">
+                Paste AI-generated text on the left and click{" "}
+                <span className="text-violet-500 font-medium">Humanize Content</span> to
+                begin.
+              </p>
+            )}
           </div>
         )}
       </div>

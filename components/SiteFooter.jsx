@@ -20,6 +20,13 @@ const modelLinks = [
   { label: "Humanize Gemini text", href: "/humanize-gemini-text" },
 ];
 
+const languageLinks = [
+  { label: "Español", href: "/es", hrefLang: "es" },
+  { label: "Français", href: "/fr", hrefLang: "fr" },
+  { label: "Deutsch", href: "/de", hrefLang: "de" },
+  { label: "Português", href: "/pt", hrefLang: "pt" },
+];
+
 const linkClass =
   "text-xs text-slate-400 dark:text-slate-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors";
 
@@ -75,6 +82,26 @@ export default function SiteFooter() {
             <nav className="flex flex-col gap-1.5">
               {modelLinks.map((link) => (
                 <Link key={link.href} href={link.href} className={linkClass}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Languages */}
+          <div>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+              Languages
+            </p>
+            <nav className="flex flex-col gap-1.5">
+              {languageLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  hrefLang={link.hrefLang}
+                  lang={link.hrefLang}
+                  className={linkClass}
+                >
                   {link.label}
                 </Link>
               ))}

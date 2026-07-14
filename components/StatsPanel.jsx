@@ -1,41 +1,57 @@
 "use client";
 
+/** English defaults; language pages override via the `ui` prop. */
+const DEFAULT_UI = {
+  title: "Stage 1 Analysis",
+  sentences: "Sentences",
+  avgLength: "Avg. Length",
+  burstiness: "Burstiness",
+  overused: "Overused words detected:",
+  ratings: { excellent: "Excellent", good: "Good", moderate: "Moderate", uniform: "Uniform" },
+};
+
 /**
- * @param {{ metadata: import('../lib/types.js').Stage1Metadata | null }} props
+ * @param {{
+ *   metadata: import('../lib/types.js').Stage1Metadata | null;
+ *   ui?: Partial<typeof DEFAULT_UI>;
+ * }} props
  */
-export default function StatsPanel({ metadata }) {
+export default function StatsPanel({ metadata, ui }) {
   if (!metadata) return null;
+
+  const t = { ...DEFAULT_UI, ...ui };
+  const ratings = { ...DEFAULT_UI.ratings, ...(ui?.ratings ?? {}) };
 
   const { sentenceCount, averageSentenceLength, burstiness, frequentWords } =
     metadata;
 
   /**
-   * Describes the burstiness score in plain English.
+   * Describes the burstiness score in plain language.
    * @param {number} score
    * @returns {{ label: string; color: string }}
    */
   function burstinessLabel(score) {
-    if (score >= 0.4) return { label: "Excellent", color: "text-emerald-600 dark:text-emerald-400" };
-    if (score >= 0.1) return { label: "Good", color: "text-sky-600 dark:text-sky-400" };
-    if (score >= -0.2) return { label: "Moderate", color: "text-amber-600 dark:text-amber-400" };
-    return { label: "Uniform", color: "text-rose-600 dark:text-rose-400" };
+    if (score >= 0.4) return { label: ratings.excellent, color: "text-emerald-600 dark:text-emerald-400" };
+    if (score >= 0.1) return { label: ratings.good, color: "text-sky-600 dark:text-sky-400" };
+    if (score >= -0.2) return { label: ratings.moderate, color: "text-amber-600 dark:text-amber-400" };
+    return { label: ratings.uniform, color: "text-rose-600 dark:text-rose-400" };
   }
 
   const burst = burstinessLabel(burstiness);
 
   const stats = [
     {
-      label: "Sentences",
+      label: t.sentences,
       value: sentenceCount.toLocaleString(),
       description: "Total sentence count",
     },
     {
-      label: "Avg. Length",
+      label: t.avgLength,
       value: `${averageSentenceLength}w`,
       description: "Average words per sentence",
     },
     {
-      label: "Burstiness",
+      label: t.burstiness,
       value: burstiness.toFixed(2),
       description: "Sentence-length rhythm score",
       badge: burst,
@@ -45,7 +61,7 @@ export default function StatsPanel({ metadata }) {
   return (
     <div className="mt-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
       <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4">
-        Stage 1 Analysis
+        {t.title}
       </h3>
 
       <div className="grid grid-cols-3 gap-4">
@@ -68,7 +84,7 @@ export default function StatsPanel({ metadata }) {
       {frequentWords.length > 0 && (
         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
           <p className="text-xs font-medium text-slate-400 dark:text-slate-500 mb-2">
-            Overused words detected:
+            {t.overused}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {frequentWords.map((word) => (

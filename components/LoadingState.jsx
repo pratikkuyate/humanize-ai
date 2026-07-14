@@ -1,6 +1,12 @@
 "use client";
 
-export default function LoadingState() {
+/**
+ * @param {{ title?: string; subtitle?: string }} props
+ */
+export default function LoadingState({
+  title = "Humanizing your content...",
+  subtitle = "Running 3-stage rewrite pipeline",
+} = {}) {
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-[200px] gap-4 py-12">
       {/* Animated spinner */}
@@ -11,10 +17,10 @@ export default function LoadingState() {
 
       <div className="text-center space-y-1">
         <p className="text-slate-700 dark:text-slate-300 font-medium text-sm">
-          Humanizing your content...
+          {title}
         </p>
         <p className="text-slate-400 dark:text-slate-500 text-xs">
-          Running 3-stage rewrite pipeline
+          {subtitle}
         </p>
       </div>
 

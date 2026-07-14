@@ -12,8 +12,9 @@ Key facts:
 - Selectable writing styles: casual, professional, friendly, confident, academic.
 - Side-by-side original vs. humanized output; re-run for fresh variations.
 - Includes grammar/clarity cleanup and readability tuning (targets grade 7–9).
-- Best results in English; partial support for major languages (Spanish, French,
-  German, Portuguese).
+- Works in English, Spanish, French, German, and Portuguese. Each language has
+  its own rewrite rules targeting that language's AI tells (not translated
+  English rules); text is never translated.
 - Pasted text is processed to generate output and is not used to train public models.
 
 ## Main pages
@@ -30,6 +31,12 @@ Key facts:
 - [Humanize ChatGPT text](https://simplyhumanize.com/humanize-chatgpt-text): Rewrite ChatGPT/GPT-4/GPT-4o output into natural writing; removes ChatGPT's signature patterns.
 - [Humanize Claude text](https://simplyhumanize.com/humanize-claude-text): Rewrite Anthropic Claude output (Claude 3, 3.5 Sonnet) into natural, expert-sounding writing.
 - [Humanize Gemini text](https://simplyhumanize.com/humanize-gemini-text): Rewrite Google Gemini output (1.5, 2.0) into natural prose, removing the structured AI sound.
+
+## Languages
+- [Humanizador de Texto IA (Spanish)](https://simplyhumanize.com/es): Humanize AI text in Spanish with Spanish-specific rewrite rules; fully localized page and tool.
+- [Humaniser un Texte IA (French)](https://simplyhumanize.com/fr): Humanize AI text in French with French-specific rewrite rules; fully localized page and tool.
+- [KI-Text menschlich machen (German)](https://simplyhumanize.com/de): Humanize AI text in German with German-specific rewrite rules (incl. Nominalstil); fully localized page and tool.
+- [Humanizar Texto de IA (Portuguese)](https://simplyhumanize.com/pt): Humanize AI text in Portuguese with Portuguese-specific rewrite rules; fully localized page and tool.
 
 ## Humanize by use case
 - [For students](https://simplyhumanize.com/ai-humanizer-for/students): Humanize AI-assisted essays, assignments, and research drafts (follow your school's AI policy).
