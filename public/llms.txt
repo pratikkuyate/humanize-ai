@@ -31,6 +31,12 @@ Key facts:
 - [Humanize Claude text](https://simplyhumanize.com/humanize-claude-text): Rewrite Anthropic Claude output (Claude 3, 3.5 Sonnet) into natural, expert-sounding writing.
 - [Humanize Gemini text](https://simplyhumanize.com/humanize-gemini-text): Rewrite Google Gemini output (1.5, 2.0) into natural prose, removing the structured AI sound.
 
+## Languages
+- [Humanizador de Texto IA (Spanish)](https://simplyhumanize.com/es): Spanish landing page with the free humanizer embedded; explains the AI-writing tells typical of Spanish text.
+- [Humaniser un Texte IA (French)](https://simplyhumanize.com/fr): French landing page with the free humanizer embedded; explains the AI-writing tells typical of French text.
+- [KI-Text menschlich machen (German)](https://simplyhumanize.com/de): German landing page with the free humanizer embedded; explains the AI-writing tells typical of German text (incl. Nominalstil).
+- [Humanizar Texto de IA (Portuguese)](https://simplyhumanize.com/pt): Portuguese landing page with the free humanizer embedded; explains the AI-writing tells typical of Portuguese text.
+
 ## Humanize by use case
 - [For students](https://simplyhumanize.com/ai-humanizer-for/students): Humanize AI-assisted essays, assignments, and research drafts (follow your school's AI policy).
 - [For bloggers](https://simplyhumanize.com/ai-humanizer-for/bloggers): Keep your voice at scale and publish faster.

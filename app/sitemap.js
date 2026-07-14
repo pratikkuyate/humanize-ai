@@ -1,5 +1,6 @@
 import { useCases } from "@/lib/useCases";
 import { aiModels } from "@/lib/aiModels";
+import { languages } from "@/lib/languages";
 
 export default function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
@@ -60,6 +61,12 @@ export default function sitemap() {
     })),
     ...aiModels.map((m) => ({
       url: `${baseUrl}${m.urlPath}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    })),
+    ...languages.map((l) => ({
+      url: `${baseUrl}/${l.slug}`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
+import { languageAlternates } from "@/lib/languages";
 
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
@@ -19,7 +20,10 @@ export const metadata = {
   title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
   description:
     "Humanize AI text online free with instant results. Turn ChatGPT, Claude & Gemini output into natural, human-sounding writing in one click. No sign-up.",
-  alternates: { canonical: `${siteUrl}/` },
+  alternates: {
+    canonical: `${siteUrl}/`,
+    languages: languageAlternates(siteUrl),
+  },
   openGraph: {
     title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
     description:

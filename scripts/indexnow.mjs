@@ -1,5 +1,6 @@
 import { useCases } from "../lib/useCases.js";
 import { aiModels } from "../lib/aiModels.js";
+import { languages } from "../lib/languages.js";
 
 const HOST = "simplyhumanize.com";
 const KEY = "c582fa0fc6164535be121b054a3b0ab8"; // matches public/<KEY>.txt
@@ -20,6 +21,7 @@ const urlList = [
   ...staticPaths,
   ...useCases.map((uc) => `/ai-humanizer-for/${uc.slug}`),
   ...aiModels.map((m) => m.urlPath),
+  ...languages.map((l) => `/${l.slug}`),
 ].map((p) => `${BASE}${p}`);
 
 const res = await fetch("https://api.indexnow.org/indexnow", {
