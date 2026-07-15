@@ -47,6 +47,26 @@ Key facts:
 - [For agencies](https://simplyhumanize.com/ai-humanizer-for/agencies): Scale across multiple client brand voices without editing bottlenecks.
 - [For businesses](https://simplyhumanize.com/ai-humanizer-for/businesses): Professional proposals, reports, and emails that sound human.
 
+## Blog
+- [Blog index](https://simplyhumanize.com/blog): Guides on AI writing patterns, AI detectors, and humanizing AI-assisted drafts — grouped by topic.
+- [Words ChatGPT Overuses: The Complete List](https://simplyhumanize.com/blog/words-chatgpt-overuses): Categorized list of AI-typical vocabulary and phrases, why models overuse them, and how to edit them out.
+- [Why Does ChatGPT Use So Many Em Dashes?](https://simplyhumanize.com/blog/chatgpt-em-dashes): The mechanics behind the em-dash tell and how to fix AI-typical dash density.
+- [Does Turnitin Detect ChatGPT?](https://simplyhumanize.com/blog/does-turnitin-detect-chatgpt): How Turnitin's AI detection works, its accuracy record, and what students should do.
+- [AI Detector False Positives](https://simplyhumanize.com/blog/ai-detector-false-positives): Why human writing gets flagged as AI, who gets flagged most, and what to do about it.
+- [How to Humanize AI Text: The Complete Guide](https://simplyhumanize.com/blog/how-to-humanize-ai-text): Manual editing checklist, prompting techniques, and automated humanizing compared.
+- [How to Make ChatGPT Sound More Human](https://simplyhumanize.com/blog/make-chatgpt-sound-more-human): Copy-paste prompts that reduce robotic output, and why prompting alone plateaus.
+- [AI Humanizer vs Paraphrasing Tool](https://simplyhumanize.com/blog/ai-humanizer-vs-paraphrasing-tool): What each tool actually does and why paraphrased AI text still reads as AI.
+- [Why We Don't Promise a "100% Human Score"](https://simplyhumanize.com/blog/why-we-dont-promise-100-human-score): Our position on the market's standard guarantee and why it's unfalsifiable.
+- [Is Using ChatGPT Cheating?](https://simplyhumanize.com/blog/is-using-chatgpt-cheating): A straight answer for students — the spectrum of AI use and where schools draw lines.
+- [How to Use AI for Homework Without Breaking the Rules](https://simplyhumanize.com/blog/how-to-use-ai-for-homework): Green/yellow/red zones of AI use, disclosure templates, and a safe workflow.
+- [Does Google Penalize AI Content?](https://simplyhumanize.com/blog/does-google-penalize-ai-content): What Google's policies actually say and a checklist for publishing AI-assisted content safely.
+- [llms.txt: What It Is and Whether You Need One](https://simplyhumanize.com/blog/what-is-llms-txt): The proposed standard explained, honest adoption status, and how we built this file.
+- [The Most Common AI Words and Phrases](https://simplyhumanize.com/blog/most-common-ai-words): The exact pattern lists our detector checks, with signal weights explained.
+- [AI Cover Letters: Do Recruiters Notice?](https://simplyhumanize.com/blog/ai-cover-letters-do-recruiters-notice): The six tells of AI cover letters and the two-paragraph fix.
+- [How to Make an AI-Written Resume Sound Like You](https://simplyhumanize.com/blog/make-ai-resume-sound-like-you): Bullet-level fixes, ATS vs AI detection explained, keeping keywords while losing robot voice.
+- [What Makes Writing Sound Human?](https://simplyhumanize.com/blog/what-makes-writing-sound-human): Five craft fundamentals — specificity, stance, rhythm, surprise, imperfection.
+- [The Case for Short Sentences](https://simplyhumanize.com/blog/the-case-for-short-sentences): Why short sentences are the strongest human signal and how to use them.
+
 ## Legal
 - [Privacy Policy](https://simplyhumanize.com/privacy-policy): How content and data are handled.
 - [Terms of Service](https://simplyhumanize.com/terms): Terms for using the tool.

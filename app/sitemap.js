@@ -1,6 +1,7 @@
 import { useCases } from "@/lib/useCases";
 import { aiModels } from "@/lib/aiModels";
 import { languages } from "@/lib/languages";
+import { posts } from "@/lib/posts";
 
 export default function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
@@ -70,6 +71,20 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
+    })),
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(
+        posts.reduce((max, p) => (p.dateModified > max ? p.dateModified : max), "2026-07-15")
+      ),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...posts.map((p) => ({
+      url: `${baseUrl}/blog/${p.slug}`,
+      lastModified: new Date(p.dateModified),
+      changeFrequency: 'monthly',
+      priority: 0.6,
     })),
   ];
 }

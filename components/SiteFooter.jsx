@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const pageLinks = [
+  { label: "Blog", href: "/blog" },
   { label: "Use Cases", href: "/use-cases" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },

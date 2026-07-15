@@ -41,6 +41,12 @@ export default function SiteHeader() {
             Use Cases
           </Link>
           <Link
+            href="/blog"
+            className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors px-2 py-1"
+          >
+            Blog
+          </Link>
+          <Link
             href="/about"
             className="hidden sm:block text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors px-2 py-1"
           >

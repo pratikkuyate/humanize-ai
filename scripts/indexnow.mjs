@@ -1,6 +1,7 @@
 import { useCases } from "../lib/useCases.js";
 import { aiModels } from "../lib/aiModels.js";
 import { languages } from "../lib/languages.js";
+import { posts } from "../lib/posts/index.js";
 
 const HOST = "simplyhumanize.com";
 const KEY = "c582fa0fc6164535be121b054a3b0ab8"; // matches public/<KEY>.txt
@@ -15,6 +16,7 @@ const staticPaths = [
   "/use-cases",
   "/tools",
   "/tools/ai-content-detector",
+  "/blog",
 ];
 
 const urlList = [
@@ -22,6 +24,7 @@ const urlList = [
   ...useCases.map((uc) => `/ai-humanizer-for/${uc.slug}`),
   ...aiModels.map((m) => m.urlPath),
   ...languages.map((l) => `/${l.slug}`),
+  ...posts.map((p) => `/blog/${p.slug}`),
 ].map((p) => `${BASE}${p}`);
 
 const res = await fetch("https://api.indexnow.org/indexnow", {
