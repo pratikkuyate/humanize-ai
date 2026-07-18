@@ -2,6 +2,7 @@ import "./globals.css";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import ClarityAnalytics from "../components/ClarityAnalytics";
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com/"),
@@ -85,6 +86,7 @@ export default function RootLayout({ children }) {
         {children}
         <Analytics />
         <SpeedInsights />
+        <ClarityAnalytics />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-GZEF2PGXC2" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
