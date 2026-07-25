@@ -14,7 +14,7 @@ const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   ),
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
 
 export const metadata = {
   title: "AI Humanizer — Humanize AI Text Free | Simply Humanize",
