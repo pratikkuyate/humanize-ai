@@ -2,6 +2,20 @@
 const nextConfig = {
   poweredByHeader: false,
 
+  // www is a live duplicate of the apex domain — both returned 200, which is why
+  // Search Console reports www URLs as "Alternate page with proper canonical tag".
+  // Canonicals already point at the apex; this makes the redirect explicit.
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.simplyhumanize.com' }],
+        destination: 'https://simplyhumanize.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
