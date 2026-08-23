@@ -24,6 +24,7 @@ Key facts:
 
 ## Free tools
 - [AI Content Detector](https://simplyhumanize.com/tools/ai-content-detector): Free browser-based detector that scores text for six AI writing patterns (sentence uniformity, clichés, hedging, passive voice, repeated openers) with a transparent per-signal breakdown. Nothing is uploaded.
+- [Claude Watermark Remover](https://simplyhumanize.com/tools/claude-watermark-remover): Free browser-based remover for the hidden Unicode characters Claude leaves in copied text (narrow no-break spaces, zero-width characters, Unicode tag characters). Explains what the "Claude watermark" actually is; nothing is uploaded.
 - [All free tools](https://simplyhumanize.com/tools): Directory of Simply Humanize's free AI writing tools.
 
 ## Humanize by AI model

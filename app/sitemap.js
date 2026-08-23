@@ -54,6 +54,12 @@ export default function sitemap() {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/tools/claude-watermark-remover`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
     ...useCases.map((uc) => ({
       url: `${baseUrl}/ai-humanizer-for/${uc.slug}`,
       lastModified: new Date(),

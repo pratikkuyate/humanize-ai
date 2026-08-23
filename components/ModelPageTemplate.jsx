@@ -132,6 +132,31 @@ export default function ModelPageTemplate({ model }) {
             </div>
           </div>
 
+          {/* Model-specific tools, when this model has any */}
+          {model.relatedTools?.length > 0 && (
+            <div className="mt-10 pt-8 border-t border-slate-200 dark:border-slate-800">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
+                More {model.name} tools
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {model.relatedTools.map((tool) => (
+                  <Link
+                    key={tool.href}
+                    href={tool.href}
+                    className="group rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-violet-400 dark:hover:border-violet-500 transition-colors"
+                  >
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                      {tool.label}
+                    </p>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs leading-relaxed">
+                      {tool.description}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* CTA */}
           <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
             <Link

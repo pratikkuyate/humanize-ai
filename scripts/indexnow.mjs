@@ -16,6 +16,7 @@ const staticPaths = [
   "/use-cases",
   "/tools",
   "/tools/ai-content-detector",
+  "/tools/claude-watermark-remover",
   "/blog",
 ];
 
