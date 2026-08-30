@@ -91,6 +91,19 @@ export default function CheckoutButton({ onSuccess, className, label }) {
           email: order.email ?? "",
           name: order.name ?? "",
         },
+
+        // Do not ask for a phone number.
+        //
+        // Razorpay shows a mandatory contact field by default; `hidden.contact`
+        // turns it optional and takes it off the form. We have no phone number
+        // to prefill and no use for one — the pass is granted to the account,
+        // and the receipt goes to the email Razorpay already has. Every extra
+        // required field on a checkout form costs conversions.
+        //
+        // Note this is Razorpay's own supported flag, not a CSS hack: the
+        // payment still completes without a contact value.
+        hidden: { contact: true },
+
         theme: { color: "#7c3aed" },
 
         // Fires when the user dismisses the widget without paying. Without it
