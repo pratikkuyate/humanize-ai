@@ -69,10 +69,35 @@ export default function PrivacyPolicyPage() {
           ]}
         />
 
-        <H2>No Accounts, No Profiles</H2>
+        <H3>Account details</H3>
         <P>
-          No registration is required to use Simply Humanize. We do not collect your name, email
-          address, or any payment information on the free tier. We do not build profiles of users.
+          You do not need an account to use Simply Humanize. Every tool on the free plan works with
+          no registration at all, and if you never create an account we hold none of the information
+          in this section.
+        </P>
+        <P>
+          If you do create one, we store your email address, an optional display name, and a
+          cryptographic hash of your password — never the password itself. If you sign in with
+          Google we store your Google account identifier, your email address, and your name and
+          profile picture as Google supplies them. We also record which sessions are signed in, so
+          that you can be signed out, along with the browser identifier and a one-way hash of the IP
+          address each session was created from.
+        </P>
+
+        <H3>Payments</H3>
+        <P>
+          Payments are processed by Razorpay. Your card or banking details are entered directly with
+          Razorpay and never reach our servers — we cannot see them and do not store them. What we
+          keep is a record of each purchase: the Razorpay order and payment identifiers, the amount
+          and currency, and when it was paid, so that we can honour the access you bought and answer
+          billing questions.
+        </P>
+
+        <H2>No Profiles or Advertising</H2>
+        <P>
+          We do not build behavioural profiles, and we do not sell or share your information with
+          advertisers. Account data is used to sign you in, to give you the access you have paid
+          for, and to respond if you contact us — nothing else.
         </P>
 
         <H2>Cookies</H2>
@@ -98,6 +123,27 @@ export default function PrivacyPolicyPage() {
               </a>{" "}
               for how Google handles API data.
             </>,
+            <>
+              <strong>Razorpay</strong> — processes payments for Pro. Card and banking details are
+              handled entirely by Razorpay. See{" "}
+              <a
+                href="https://razorpay.com/privacy/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-600 dark:text-violet-400 hover:underline"
+              >
+                Razorpay's Privacy Policy
+              </a>
+              .
+            </>,
+            <>
+              <strong>Google Sign-In</strong> — optional. Used only if you choose to sign in with
+              Google, and only to confirm your identity and email address.
+            </>,
+            <>
+              <strong>Neon</strong> — the managed database where account and purchase records are
+              stored.
+            </>,
             <strong>Hosting infrastructure</strong>,
           ]}
         />
@@ -106,6 +152,16 @@ export default function PrivacyPolicyPage() {
         <P>
           Submitted text is not retained. Standard server logs are retained for up to 30 days for
           security purposes, then deleted.
+        </P>
+        <P>
+          Account details are kept for as long as your account exists. Sign-in sessions expire
+          automatically and are removed when they do, or immediately when you sign out. Records of
+          completed payments are kept for as long as tax and accounting rules require, even after an
+          account is closed. Free-plan usage counts are held in a cookie on your own device, or as a
+          one-way hash with no name or address attached, and reset on their own each day.
+        </P>
+        <P>
+          To delete your account and the data attached to it, email us and we will action it.
         </P>
 
         <H2>Children's Privacy</H2>

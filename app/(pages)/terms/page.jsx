@@ -45,8 +45,44 @@ export default function TermsPage() {
         <H2>The Service</H2>
         <P>
           Simply Humanize is a web-based tool that rewrites AI-generated text into natural,
-          human-sounding writing using the Google Gemini API. The service is offered free of charge
-          with no guarantee of uptime, availability, or service level.
+          human-sounding writing using the Google Gemini API. A free plan is available with no
+          account and no payment, subject to a daily limit on runs and a limit on the length of each
+          run. Neither plan carries a guarantee of uptime, availability, or service level.
+        </P>
+
+        <H2>Accounts</H2>
+        <P>
+          An account is required only to purchase Pro. You are responsible for keeping your password
+          secure and for activity that takes place under your account. Tell us promptly if you
+          believe someone else has access to it. We may suspend or close an account that breaches
+          the Acceptable Use section below.
+        </P>
+
+        <H2>Pro Passes, Payment, and Refunds</H2>
+        <P>
+          Pro is sold as a one-time pass granting a fixed number of days of access from the moment
+          payment is confirmed. It is <strong>not</strong> a subscription: nothing renews
+          automatically, no card details are stored for future charges, and there is nothing to
+          cancel. When the pass expires your account returns to the free plan. Buying another pass
+          while one is still running adds its days to the end of the current one.
+        </P>
+        <P>
+          Payments are processed by Razorpay. Prices are shown inclusive of the stated currency and
+          may change for future purchases, though a change never affects a pass you have already
+          bought.
+        </P>
+        <P>
+          If a pass fails to activate after you have been charged, or the service is materially
+          unavailable for a sustained part of your pass, contact us and we will restore the access
+          or refund you. Beyond that, because access begins immediately on payment, passes are
+          otherwise non-refundable once used. Nothing here limits any refund rights you have under
+          the consumer law that applies to you.
+        </P>
+        <P>
+          &ldquo;Unlimited&rdquo; on the Pro plan means we do not apply a daily run cap or a
+          per-run word limit to ordinary human use of the tools. It does not extend to automated,
+          scripted, or resold use, or to volumes far outside normal individual use. If usage on an
+          account reaches that point we will contact you before taking any action.
         </P>
 
         <H2>Acceptable Use</H2>
@@ -55,7 +91,7 @@ export default function TermsPage() {
           items={[
             "Submit content that is illegal, defamatory, harassing, or infringes on third-party intellectual property rights.",
             "Attempt to reverse-engineer, scrape, or abuse the service or its underlying API.",
-            "Circumvent any rate limits or access controls.",
+            "Circumvent any rate limits or access controls, or share account credentials to extend paid access beyond one person.",
             "Submit malware, malicious code, or content designed to disrupt the service.",
           ]}
         />

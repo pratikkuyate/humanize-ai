@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { scoreText } from "@/lib/aiScore";
-
-const MAX_LENGTH = 20_000;
+import { countWords } from "@/lib/wordCount";
+import { FREE_MAX_WORDS } from "@/lib/freeTier";
+import { useQuota } from "@/components/useQuota";
+import UpgradeModal from "@/components/UpgradeModal";
 
 /**
  * Sample passages so users can try the detector instantly. The first is written
@@ -50,14 +52,33 @@ function scoreTone(score) {
 export default function AiDetectorTool() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
+  const [upgrade, setUpgrade] = useState(null);
   const sampleIndex = useState(() => ({ i: 0 }))[0];
+  const { quota, consume } = useQuota("detect");
 
-  const charCount = text.length;
-  const isOverLimit = charCount > MAX_LENGTH;
+  const wordCount = countWords(text);
+  const isOverLimit = wordCount > FREE_MAX_WORDS;
+  const isExhausted = quota?.metered === true && quota.remaining <= 0;
+  // Stays clickable when exhausted so the upgrade dialog can open.
   const canAnalyze = text.trim().length > 0 && !isOverLimit;
 
-  function handleAnalyze() {
+  async function handleAnalyze() {
     if (!canAnalyze) return;
+
+    if (isExhausted) {
+      setUpgrade({ quota, message: null });
+      return;
+    }
+
+    // Ask permission before running. Only the tool name goes to the server —
+    // the text itself never leaves the browser, which is what the page promises.
+    const { allowed, data } = await consume();
+    if (!allowed) {
+      setUpgrade({ quota: data ?? quota, message: data?.message ?? null });
+      return;
+    }
+
+    setUpgrade(null);
     setResult(scoreText(text));
   }
 
@@ -65,6 +86,7 @@ export default function AiDetectorTool() {
     setText(SAMPLE_TEXTS[sampleIndex.i % SAMPLE_TEXTS.length]);
     sampleIndex.i += 1;
     setResult(null);
+    setUpgrade(null);
   }
 
   function handleKeyDown(e) {
@@ -120,12 +142,12 @@ export default function AiDetectorTool() {
                   : "text-slate-600 dark:text-slate-400"
               }
             >
-              {charCount.toLocaleString()}
+              {wordCount.toLocaleString()}
             </span>
             <span className="text-slate-300 dark:text-slate-600">
-              /{MAX_LENGTH.toLocaleString()}
+              /{FREE_MAX_WORDS.toLocaleString()}
             </span>{" "}
-            chars
+            words
           </span>
           <button
             onClick={handleAnalyze}
@@ -238,6 +260,13 @@ export default function AiDetectorTool() {
           </div>
         )}
       </div>
+
+      <UpgradeModal
+        open={Boolean(upgrade)}
+        onClose={() => setUpgrade(null)}
+        quota={upgrade?.quota ?? quota}
+        message={upgrade?.message}
+      />
     </div>
   );
 }

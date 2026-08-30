@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeaderAuth from "./HeaderAuth";
 
 function LogoIcon() {
   return (
@@ -41,6 +42,12 @@ export default function SiteHeader() {
             Use Cases
           </Link>
           <Link
+            href="/pricing"
+            className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors px-2 py-1"
+          >
+            Pricing
+          </Link>
+          <Link
             href="/blog"
             className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors px-2 py-1"
           >
@@ -52,10 +59,12 @@ export default function SiteHeader() {
           >
             About
           </Link>
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
+          <span className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800">
             <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
             3-Stage Pipeline
           </span>
+
+          <HeaderAuth />
         </nav>
       </div>
     </header>

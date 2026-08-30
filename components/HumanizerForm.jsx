@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const MIN_LENGTH = 50;
-const MAX_LENGTH = 20_000;
+import { countWords } from "@/lib/wordCount";
+import { FREE_MAX_WORDS, MIN_LENGTH } from "@/lib/freeTier";
+import { useQuota } from "@/components/useQuota";
+import UpgradeModal from "@/components/UpgradeModal";
 
 /**
  * Deliberately AI-sounding sample passages so users can try the tool without
@@ -29,7 +30,9 @@ const SAMPLE_TEXTS = [
 export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [upgrade, setUpgrade] = useState(null);
   const sampleIndexRef = useRef(0);
+  const { quota, apply } = useQuota("humanize");
 
   // One-time hand-off from the AI detector ("Humanize it" CTA): pre-fill the box.
   useEffect(() => {
@@ -43,9 +46,13 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   }, []);
 
   const charCount = text.length;
-  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const isOverLimit = charCount > MAX_LENGTH;
+  // Same function the API uses, so the number on screen is the number enforced.
+  const wordCount = countWords(text);
+  const isOverLimit = wordCount > FREE_MAX_WORDS;
   const isTooShort = charCount > 0 && charCount < MIN_LENGTH;
+  const isExhausted = quota?.metered === true && quota.remaining <= 0;
+  // Deliberately NOT gated on isExhausted: the button has to stay clickable so
+  // running out opens the upgrade dialog instead of leaving a dead grey button.
   const canSubmit = charCount >= MIN_LENGTH && !isOverLimit && !isLoading;
 
   /** @param {React.ChangeEvent<HTMLTextAreaElement>} e */
@@ -64,6 +71,13 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
 
   async function handleSubmit() {
     if (!canSubmit) return;
+
+    // Out of runs — prompt instead of spending a request we know will 429.
+    if (isExhausted) {
+      setUpgrade({ quota, message: null });
+      return;
+    }
+
     setError("");
     onLoadingChange(true);
 
@@ -76,11 +90,21 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
 
       const data = await response.json();
 
+      if (response.status === 429 && data.error === "quota_exceeded") {
+        const next = { remaining: 0, limit: data.limit, resetAt: data.resetAt, metered: true };
+        apply(next);
+        setUpgrade({ quota: next, message: data.message ?? null });
+        return;
+      }
+
       if (!data.success) {
         setError(data.error ?? "An unexpected error occurred.");
         return;
       }
 
+      // The API already spent the attempt; adopt its count rather than
+      // decrementing here, or the run would be charged twice.
+      apply(data.quota);
       onResult({ humanizedText: data.humanizedText, metadata: data.metadata });
     } catch {
       setError("Network error. Please check your connection and try again.");
@@ -171,15 +195,15 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
                     : "text-slate-600 dark:text-slate-400"
                 }
               >
-                {charCount.toLocaleString()}
+                {wordCount.toLocaleString()}
               </span>
               <span className="text-slate-300 dark:text-slate-600">
-                /{MAX_LENGTH.toLocaleString()}
+                /{FREE_MAX_WORDS.toLocaleString()}
               </span>{" "}
-              chars
+              words
             </span>
             <span className="text-slate-300 dark:text-slate-600">·</span>
-            <span>{wordCount.toLocaleString()} words</span>
+            <span>{charCount.toLocaleString()} chars</span>
           </div>
 
           {/* Submit button */}
@@ -214,6 +238,13 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
           </p>
         )}
       </div>
+
+      <UpgradeModal
+        open={Boolean(upgrade)}
+        onClose={() => setUpgrade(null)}
+        quota={upgrade?.quota ?? quota}
+        message={upgrade?.message}
+      />
     </div>
   );
 }

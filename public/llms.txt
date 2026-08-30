@@ -7,8 +7,10 @@
 > No sign-up or credit card required to try it.
 
 Key facts:
-- Free tier with a generous per-request word limit; paid plans add higher limits,
-  batch processing, more styles, and priority speed.
+- Free plan: 3 runs a day on each tool, up to 7,000 words per run, no account and
+  no card. Pro: $9 for 30 days of unlimited runs with no daily cap and no word
+  limit. Pro is a one-time payment, not a subscription — nothing auto-renews.
+- An account is only needed for Pro. Every free tool works without signing up.
 - Selectable writing styles: casual, professional, friendly, confident, academic.
 - Side-by-side original vs. humanized output; re-run for fresh variations.
 - Includes grammar/clarity cleanup and readability tuning (targets grade 7–9).
@@ -19,6 +21,7 @@ Key facts:
 ## Main pages
 - [Home / AI Humanizer tool](https://simplyhumanize.com/): Paste AI text and get natural, human-sounding writing in one click. Includes how-it-works, features, and FAQ.
 - [Use cases](https://simplyhumanize.com/use-cases): Overview of who uses the humanizer and how.
+- [Pricing](https://simplyhumanize.com/pricing): Free plan with 3 runs a day and no sign-up; Pro at $9 for a 30-day pass with unlimited runs, no daily cap and no word limit. One-time payment, nothing renews automatically.
 - [About](https://simplyhumanize.com/about): What the tool does and how it works.
 - [Contact](https://simplyhumanize.com/contact): Get in touch.
 

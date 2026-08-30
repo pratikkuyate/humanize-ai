@@ -9,6 +9,7 @@ const BASE = `https://${HOST}`;
 
 const staticPaths = [
   "/",
+  "/pricing",
   "/about",
   "/contact",
   "/privacy-policy",
