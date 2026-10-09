@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { posts, getPostBySlug, clusters, author, readingTimeMinutes } from "@/lib/posts";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { renderInline, plainText } from "@/components/InlineText";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
 
@@ -42,52 +43,6 @@ function formatDate(iso) {
     day: "numeric",
     timeZone: "UTC",
   });
-}
-
-/**
- * Renders a plain string with [label](href) links and **bold** spans.
- * Internal hrefs (starting with "/") use next/link; anything else is a plain anchor.
- * @param {string} text
- */
-function renderInline(text) {
-  const parts = [];
-  const pattern = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g;
-  let lastIndex = 0;
-  let match;
-  let key = 0;
-  while ((match = pattern.exec(text)) !== null) {
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-    if (match[1] !== undefined) {
-      const href = match[2];
-      const cls =
-        "text-violet-600 dark:text-violet-400 font-medium underline decoration-violet-300 dark:decoration-violet-700 underline-offset-2 hover:decoration-2";
-      parts.push(
-        href.startsWith("/") ? (
-          <Link key={key++} href={href} className={cls}>
-            {match[1]}
-          </Link>
-        ) : (
-          <a key={key++} href={href} className={cls} target="_blank" rel="noopener noreferrer">
-            {match[1]}
-          </a>
-        )
-      );
-    } else {
-      parts.push(
-        <strong key={key++} className="font-semibold text-slate-800 dark:text-slate-100">
-          {match[3]}
-        </strong>
-      );
-    }
-    lastIndex = pattern.lastIndex;
-  }
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts;
-}
-
-/** Strip inline markdown for schema text fields. */
-function plainText(text) {
-  return text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*([^*]+)\*\*/g, "$1");
 }
 
 function buildJsonLd(post) {
