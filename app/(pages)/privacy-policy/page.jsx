@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
           Privacy Policy
         </h1>
         <p className="text-sm text-slate-400 dark:text-slate-500 mb-10">
-          Last updated: June 2025
+          Last updated: October 2026
         </p>
 
         <H2>Overview</H2>
@@ -102,17 +102,59 @@ export default function PrivacyPolicyPage() {
 
         <H2>Cookies</H2>
         <P>
-          We do not use advertising or tracking cookies. The site may set minimal functional cookies
-          required for basic operation (e.g., session state). We do not use third-party advertising
-          networks or cross-site tracking.
+          We do not use advertising cookies or third-party advertising networks. The site sets
+          functional cookies required for basic operation (e.g., session state and free-plan usage
+          counts), and the analytics tools described below may set their own first-party cookies to
+          measure how the site is used.
         </P>
+
+        <H2>Analytics</H2>
+        <P>
+          We use analytics to understand which pages are useful and where the site needs work. These
+          tools see page visits and interactions, not the text you paste into the humanizer.
+        </P>
+        <UL
+          items={[
+            <>
+              <strong>Google Analytics 4</strong> — aggregate traffic and page-usage statistics. It
+              may set cookies such as <code>_ga</code>.
+            </>,
+            <>
+              <strong>Microsoft Clarity</strong> — aggregate usage insights such as heatmaps and
+              session recordings. It may set cookies such as <code>_clck</code> and{" "}
+              <code>_clsk</code>. Microsoft documents how Clarity handles consent in its{" "}
+              <a
+                href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/consent-mode"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-600 dark:text-violet-400 hover:underline"
+              >
+                Clarity consent documentation
+              </a>
+              .
+            </>,
+            <>
+              <strong>Vercel Web Analytics and Speed Insights</strong> — aggregate page-view and
+              performance measurements from our hosting provider.
+            </>,
+          ]}
+        />
 
         <H2>Third-Party Services</H2>
         <UL
           items={[
             <>
               <strong>Google Gemini API</strong> — used to process and rewrite your submitted text.
-              See{" "}
+              How Google handles data sent through the API is governed by the{" "}
+              <a
+                href="https://ai.google.dev/gemini-api/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-600 dark:text-violet-400 hover:underline"
+              >
+                Gemini API Additional Terms of Service
+              </a>
+              , alongside{" "}
               <a
                 href="https://policies.google.com/privacy"
                 target="_blank"
@@ -120,8 +162,8 @@ export default function PrivacyPolicyPage() {
                 className="text-violet-600 dark:text-violet-400 hover:underline"
               >
                 Google's Privacy Policy
-              </a>{" "}
-              for how Google handles API data.
+              </a>
+              .
             </>,
             <>
               <strong>Razorpay</strong> — processes payments for Pro. Card and banking details are

@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { ExternalLink, renderInline, plainText } from "@/components/InlineText";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
@@ -44,7 +45,7 @@ const faqs = [
   },
   {
     q: "Does this work the same way as GPTZero or Turnitin?",
-    a: "No, and it doesn't claim to. Commercial detectors use trained machine-learning models on large datasets. This tool is a transparent rule-based heuristic that measures specific writing patterns common in AI text — sentence-length uniformity, cliché density, hedging, passive voice, and repeated openers. It tells you why text reads as AI, which those tools usually don't.",
+    a: "No, and it doesn't claim to. [Commercial detectors](https://en.wikipedia.org/wiki/Artificial_intelligence_content_detection) use trained machine-learning models on large datasets. This tool is a transparent rule-based heuristic that measures specific writing patterns common in AI text — sentence-length uniformity, cliché density, hedging, passive voice, and repeated openers. It tells you why text reads as AI, which those tools usually don't.",
   },
   {
     q: "Can AI detectors be wrong?",
@@ -63,7 +64,7 @@ function buildFaqSchema() {
     mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      acceptedAnswer: { "@type": "Answer", text: plainText(f.a) },
     })),
   };
 }
@@ -177,6 +178,22 @@ export default function AiContentDetectorPage() {
               patterns it found so you can improve the writing, not to label anyone a
               cheater. Never make an accusation based on any detector's score.
             </p>
+            <p className="text-slate-600 dark:text-slate-300 leading-relaxed mt-4">
+              The published evidence backs this up. A peer-reviewed test of 14
+              detectors found them{" "}
+              <ExternalLink href="https://doi.org/10.1007/s40979-023-00146-z">
+                &ldquo;neither accurate nor reliable&rdquo;
+              </ExternalLink>
+              ; Stanford researchers found detectors{" "}
+              <ExternalLink href="https://hai.stanford.edu/news/ai-detectors-biased-against-non-native-english-writers">
+                misclassified 61% of non-native English essays
+              </ExternalLink>{" "}
+              as AI; and OpenAI{" "}
+              <ExternalLink href="https://openai.com/index/new-ai-classifier-for-indicating-ai-written-text/">
+                withdrew its own classifier
+              </ExternalLink>{" "}
+              for its low rate of accuracy.
+            </p>
           </div>
 
           <div className="mb-10">
@@ -209,7 +226,7 @@ export default function AiContentDetectorPage() {
                     {faq.q}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                    {faq.a}
+                    {renderInline(faq.a)}
                   </p>
                 </div>
               ))}

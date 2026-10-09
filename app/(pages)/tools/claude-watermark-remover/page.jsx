@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import WatermarkRemoverTool from "@/components/WatermarkRemoverTool";
+import { ExternalLink, renderInline, plainText } from "@/components/InlineText";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
 const pagePath = "/tools/claude-watermark-remover";
@@ -52,12 +53,14 @@ export const metadata = {
 const markers = [
   {
     code: "U+202F",
+    ref: "https://en.wikipedia.org/wiki/Non-breaking_space",
     name: "Narrow no-break space",
     where: "Wrapped around em dashes in almost every Claude paragraph",
     risk: "The single most common Claude watermark character",
   },
   {
     code: "U+200B",
+    ref: "https://en.wikipedia.org/wiki/Zero-width_space",
     name: "Zero-width space",
     where: "Between words or after sentence-ending punctuation",
     risk: "Breaks search, word counts, and string matching",
@@ -82,9 +85,10 @@ const markers = [
   },
   {
     code: "U+E0000–E007F",
+    ref: "https://en.wikipedia.org/wiki/Tags_%28Unicode_block%29",
     name: "Unicode tag characters",
     where: "Anywhere; renders as absolutely nothing",
-    risk: "Can encode arbitrary hidden data in plain text",
+    risk: "Can encode arbitrary [hidden data](https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/) in plain text",
   },
 ];
 
@@ -119,7 +123,7 @@ const faqs = [
   },
   {
     q: "Does this work on ChatGPT and Gemini output too?",
-    a: "Yes. The hidden characters are not unique to Claude — ChatGPT and Gemini emit the same narrow no-break spaces and zero-width characters, so the same remover cleans their output just as well. The tool does not care which model produced the text.",
+    a: "Yes. The hidden characters are not unique to Claude — ChatGPT and Gemini emit the same narrow no-break spaces and zero-width characters, so the same remover cleans their output just as well. The tool does not care which model produced the text. One limit worth knowing: Gemini app text also carries Google's [SynthID](https://deepmind.google/technologies/synthid/) watermark, which is statistical — it lives in the word choices themselves — so no hidden-character remover touches it.",
   },
 ];
 
@@ -130,7 +134,7 @@ function buildFaqSchema() {
     mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      acceptedAnswer: { "@type": "Answer", text: plainText(f.a) },
     })),
   };
 }
@@ -263,7 +267,9 @@ export default function ClaudeWatermarkRemoverPage() {
               <strong className="text-slate-800 dark:text-slate-200">
                 Not as a cryptographic signature.
               </strong>{" "}
-              Anthropic has not shipped a statistical watermark that proves Claude
+              Anthropic has not shipped a{" "}
+              <ExternalLink href="https://arxiv.org/abs/2301.10226">statistical watermark</ExternalLink>{" "}
+              that proves Claude
               wrote a given passage. But Claude output does carry a consistent set of
               hidden Unicode characters — above all the narrow no-break space
               (U+202F) sitting on both sides of its em dashes. Nobody types that
@@ -318,7 +324,7 @@ export default function ClaudeWatermarkRemoverPage() {
                     >
                       <td className="py-3 pr-4">
                         <span className="font-mono text-xs text-violet-600 dark:text-violet-400 block">
-                          {m.code}
+                          {m.ref ? <ExternalLink href={m.ref}>{m.code}</ExternalLink> : m.code}
                         </span>
                         <span className="text-slate-600 dark:text-slate-300 text-xs">{m.name}</span>
                       </td>
@@ -326,7 +332,7 @@ export default function ClaudeWatermarkRemoverPage() {
                         {m.where}
                       </td>
                       <td className="py-3 text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
-                        {m.risk}
+                        {renderInline(m.risk)}
                       </td>
                     </tr>
                   ))}
@@ -498,7 +504,7 @@ export default function ClaudeWatermarkRemoverPage() {
                     {faq.q}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                    {faq.a}
+                    {renderInline(faq.a)}
                   </p>
                 </div>
               ))}
