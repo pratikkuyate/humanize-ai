@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { H2, P } from "@/components/ProseHelpers";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { ExternalLink } from "@/components/InlineText";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
 
@@ -50,7 +51,8 @@ export default function AboutPage() {
 
         <H2>How It Works</H2>
         <P>
-          You paste AI-generated text into the tool. We send it to the Google Gemini API with
+          You paste AI-generated text into the tool. We send it to the{" "}
+          <ExternalLink href="https://ai.google.dev/gemini-api/docs">Google Gemini API</ExternalLink> with
           humanization-focused instructions. The rewritten text comes back in seconds — ready to
           copy, edit, or publish. No account needed. No data stored.
         </P>
