@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { aiModels } from "@/lib/aiModels";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { renderInline, plainText } from "@/components/InlineText";
 
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
@@ -19,7 +20,7 @@ function buildFaqSchema(model) {
     mainEntity: model.faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      acceptedAnswer: { "@type": "Answer", text: plainText(f.a) },
     })),
   };
 }
@@ -70,7 +71,7 @@ export default function ModelPageTemplate({ model }) {
               </h2>
               {section.body && (
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                  {section.body}
+                  {renderInline(section.body)}
                 </p>
               )}
               {section.steps && (
@@ -81,7 +82,7 @@ export default function ModelPageTemplate({ model }) {
                         {i + 1}
                       </span>
                       <p className="text-slate-600 dark:text-slate-300 leading-relaxed pt-0.5">
-                        {step}
+                        {renderInline(step)}
                       </p>
                     </li>
                   ))}
@@ -102,7 +103,7 @@ export default function ModelPageTemplate({ model }) {
                     {faq.q}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                    {faq.a}
+                    {renderInline(faq.a)}
                   </p>
                 </div>
               ))}
