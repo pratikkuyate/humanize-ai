@@ -3,6 +3,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
+import { ExternalLink, renderInline, plainText } from "@/components/InlineText";
 import { languageAlternates } from "@/lib/languages";
 
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
@@ -74,7 +75,7 @@ const faqs = [
   {
     question: "Does humanized content rank better on Google?",
     answer:
-      "Humanizing supports the signals Google rewards. Google’s guidance focuses on helpful, people-first content — and engagement metrics like time on page and low bounce rates reflect whether readers find content genuinely useful. Robotic AI text tends to lose readers fast, which works against those signals. Humanized content reads naturally, keeps people on the page longer, and preserves your target keywords in context. No tool can guarantee rankings, but readable, engaging content gives your pages a measurably better shot than raw AI output.",
+      "Not automatically — Google doesn’t rank text higher because it was humanized. Its guidance focuses on helpful, people-first content, and Google says it uses [aggregated and anonymised interaction data](https://www.google.com/search/howsearchworks/how-search-works/ranking-results/) to assess whether search results are relevant. Robotic AI text tends to lose readers fast. Humanized content reads naturally and preserves your target keywords in context, so it serves the people Google is trying to satisfy. No tool can guarantee rankings, but readable content gives your pages a better shot than raw AI output.",
   },
   {
     question: "Can I humanize ChatGPT content specifically?",
@@ -159,7 +160,7 @@ const faqJsonLd = {
   mainEntity: faqs.map((faq) => ({
     "@type": "Question",
     name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    acceptedAnswer: { "@type": "Answer", text: plainText(faq.answer) },
   })),
 };
 
@@ -658,7 +659,11 @@ export default function Home() {
               Most web content performs best at a grade 7–9 reading level — clear enough for
               everyone, smart enough for anyone. The humanizer actively moves your text toward that
               zone. Long sentences get split. Jargon gets translated. Dense paragraphs get air. The
-              result scores measurably better on readability tests like Flesch-Kincaid, which means
+              result scores measurably better on readability tests like{" "}
+              <ExternalLink href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests">
+                Flesch-Kincaid
+              </ExternalLink>
+              , which means
               real readers finish what they start.
             </P>
 
@@ -759,17 +764,20 @@ export default function Home() {
             <H3>SEO Professionals</H3>
             <P>
               SEO content lives in a tension: it has to satisfy search engines <em>and</em> hold
-              human readers. Google’s helpful content guidance has been clear — content that exists
+              human readers. Google’s{" "}
+              <ExternalLink href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content">
+                helpful content guidance
+              </ExternalLink>{" "}
+              has been clear — content that exists
               for people performs better than content that exists for crawlers. Thin, robotic AI
               text increasingly struggles to hold rankings because it fails the human side of that
               equation.
             </P>
             <P>
               SEO pros use the humanizer to scale content production without scaling that risk.
-              Keywords stay intact. Structure stays intact. But engagement signals — time on page,
-              scroll depth, return visits — improve because the content is actually pleasant to
-              read. It’s the difference between content that ranks for a month and content that
-              holds position.
+              Keywords stay intact. Structure stays intact. But readers stay, scroll, and come
+              back, because the content is actually pleasant to read — which is the people-first
+              standard that guidance describes.
             </P>
             <Link href="/ai-humanizer-for/seo-writers" className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mb-6">
               AI humanizer for SEO writers →
@@ -931,7 +939,7 @@ export default function Home() {
                     </span>
                   </summary>
                   <p className="mt-3 text-slate-600 dark:text-slate-300 leading-relaxed">
-                    {faq.answer}
+                    {renderInline(faq.answer)}
                   </p>
                   {faq.question === "Can I humanize ChatGPT content specifically?" && (
                     <div className="mt-3 flex flex-wrap gap-3">
