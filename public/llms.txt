@@ -70,6 +70,16 @@ Key facts:
 - [How to Make an AI-Written Resume Sound Like You](https://simplyhumanize.com/blog/make-ai-resume-sound-like-you): Bullet-level fixes, ATS vs AI detection explained, keeping keywords while losing robot voice.
 - [What Makes Writing Sound Human?](https://simplyhumanize.com/blog/what-makes-writing-sound-human): Five craft fundamentals — specificity, stance, rhythm, surprise, imperfection.
 - [The Case for Short Sentences](https://simplyhumanize.com/blog/the-case-for-short-sentences): Why short sentences are the strongest human signal and how to use them.
+- [What Is Turnitin Clarity?](https://simplyhumanize.com/blog/what-is-turnitin-clarity): What Turnitin's writing-process tool records, what instructors see, and how it relates to AI detection.
+- [What Is Grammarly Authorship?](https://simplyhumanize.com/blog/grammarly-authorship): How Grammarly's opt-in authorship tracking works, what's free, privacy, and its limits.
+- [Does Gemini Watermark Text?](https://simplyhumanize.com/blog/does-gemini-watermark-text): Google's SynthID text watermark explained, who can detect it, and how it compares with Claude and ChatGPT.
+- [AI Checker That Doesn't Store Your Data](https://simplyhumanize.com/blog/ai-checker-that-doesnt-store-data): Where pasted text goes, a privacy checklist for AI detectors, and how to verify in-browser analysis.
+- [Does This Sound Like AI?](https://simplyhumanize.com/blog/does-this-sound-like-ai): A 10-point self-check for AI-sounding writing, with quick fixes.
+- [How to Make ChatGPT Write Like You](https://simplyhumanize.com/blog/make-chatgpt-write-like-me): Voice profiles, custom instructions, personality settings, memory and Projects (2026).
+- [Build a "Write Like a Human" Claude Skill](https://simplyhumanize.com/blog/write-like-a-human-claude-skill): How Claude Skills work, a template SKILL.md, and community humanizer skills.
+- [What Is AI Workslop?](https://simplyhumanize.com/blog/ai-workslop): The Stanford/BetterUp research on low-substance AI work, its cost, and a checklist to avoid it.
+- [AI-Generated vs AI-Assisted Content](https://simplyhumanize.com/blog/ai-generated-vs-ai-assisted-content): How Google, Amazon KDP, the US Copyright Office, the EU AI Act and Steam draw the line.
+- [Why Does Everything Sound Like ChatGPT?](https://simplyhumanize.com/blog/why-everything-sounds-like-chatgpt): Research on AI vocabulary spreading into human writing and why models converge on one voice.
 
 ## Legal
 - [Privacy Policy](https://simplyhumanize.com/privacy-policy): How content and data are handled.
