@@ -132,6 +132,21 @@ export async function POST(request) {
       );
     }
 
+    // Every model in the fallback chain was overloaded
+    const httpStatus = /** @type {any} */ (err)?.httpStatus;
+    if (httpStatus === 503 || httpStatus === 500 || httpStatus === 504) {
+      return applyQuota(
+        NextResponse.json(
+          {
+            success: false,
+            error: "The AI service is busy right now. Please try again in a few seconds.",
+          },
+          { status: 503 }
+        ),
+        refunded
+      );
+    }
+
     // Missing API key
     if (message.includes("GEMINI_API_KEY")) {
       return applyQuota(
