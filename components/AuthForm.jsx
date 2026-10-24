@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { track } from "@/lib/analytics";
 
 /**
  * The sign-in and sign-up form. One component for both, because they differ only
@@ -80,6 +81,9 @@ export default function AuthForm({ mode, googleEnabled }) {
         return;
       }
 
+      // GA4 sends events with sendBeacon, so this survives the navigation below.
+      track(isSignup ? "sign_up" : "login", { method: "email" });
+
       // A hard navigation rather than router.push: the session cookie was only
       // just set, and the destination's server-rendered markup still reflects a
       // signed-out visitor.
@@ -105,6 +109,9 @@ export default function AuthForm({ mode, googleEnabled }) {
         <>
           <a
             href={`/api/auth/google?next=${encodeURIComponent(next)}`}
+            // The callback cannot tell a new Google account from a returning one
+            // client-side, so this records intent; sign_up for Google is not split out.
+            onClick={() => track("google_auth_click", { mode })}
             className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
           >
             <GoogleMark />

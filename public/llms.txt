@@ -7,11 +7,13 @@
 > No sign-up or credit card required to try it.
 
 Key facts:
-- Free plan: 3 runs a day on each tool, up to 7,000 words per run, no account and
-  no card. Pro: $9 for 30 days of unlimited runs with no daily cap and no word
-  limit. Pro is a one-time payment, not a subscription — nothing auto-renews.
+- Free plan: 3 humanizer runs a day, up to 7,000 words per run, no account and
+  no card. The AI Content Detector and Claude Watermark Remover run in the browser
+  and are free with no usage limit. Pro: $9 for 30 days of unlimited humanizer runs
+  with no daily cap and no word limit. Pro is a one-time payment, not a
+  subscription — nothing auto-renews.
 - An account is only needed for Pro. Every free tool works without signing up.
-- Selectable writing styles: casual, professional, friendly, confident, academic.
+- No style selector: the humanizer keeps the tone of the text you paste.
 - Side-by-side original vs. humanized output; re-run for fresh variations.
 - Includes grammar/clarity cleanup and readability tuning (targets grade 7–9).
 - Best results in English; partial support for major languages (Spanish, French,
@@ -21,14 +23,14 @@ Key facts:
 ## Main pages
 - [Home / AI Humanizer tool](https://simplyhumanize.com/): Paste AI text and get natural, human-sounding writing in one click. Includes how-it-works, features, and FAQ.
 - [Use cases](https://simplyhumanize.com/use-cases): Overview of who uses the humanizer and how.
-- [Pricing](https://simplyhumanize.com/pricing): Free plan with 3 runs a day and no sign-up; Pro at $9 for a 30-day pass with unlimited runs, no daily cap and no word limit. One-time payment, nothing renews automatically.
+- [Pricing](https://simplyhumanize.com/pricing): Free plan with 3 humanizer runs a day and no sign-up; Pro at $9 for a 30-day pass with unlimited runs, no daily cap and no word limit. One-time payment, nothing renews automatically.
 - [About](https://simplyhumanize.com/about): What the tool does and how it works.
 - [Contact](https://simplyhumanize.com/contact): Get in touch.
 
 ## Free tools
 - [AI Content Detector](https://simplyhumanize.com/tools/ai-content-detector): Free browser-based detector that scores text for six AI writing patterns (sentence uniformity, clichés, hedging, passive voice, repeated openers) with a transparent per-signal breakdown. Nothing is uploaded.
 - [Claude Watermark Remover](https://simplyhumanize.com/tools/claude-watermark-remover): Free browser-based remover for the hidden Unicode characters Claude leaves in copied text (narrow no-break spaces, zero-width characters, Unicode tag characters). Explains what the "Claude watermark" actually is; nothing is uploaded.
-- [All free tools](https://simplyhumanize.com/tools): Directory of Simply Humanize's free AI writing tools.
+- [All free tools](https://simplyhumanize.com/tools): Hub page listing every free Simply Humanize tool, with what each one does and when to use it.
 
 ## Humanize by AI model
 - [Humanize ChatGPT text](https://simplyhumanize.com/humanize-chatgpt-text): Rewrite ChatGPT/GPT-4/GPT-4o output into natural writing; removes ChatGPT's signature patterns.

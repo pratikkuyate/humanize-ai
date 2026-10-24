@@ -5,16 +5,16 @@ import { useCallback, useEffect, useState } from "react";
 /**
  * Client-side view of the free-tier quota for one tool.
  *
- * Two different consumption paths exist on purpose:
+ * The humanizer spends its attempt inside /api/humanize, because that is the
+ * call with real cost behind it. The form must NOT also call `consume()` or
+ * every run would be charged twice — it passes the `quota` object from the
+ * humanize response to `apply()` instead. `consume()` is kept for any future
+ * metered tool that has no server call of its own.
  *
- *  - The humanizer spends its attempt inside /api/humanize, because that is the
- *    call with real cost behind it. The form must NOT also call `consume()` or
- *    every run would be charged twice — it passes the `quota` object from the
- *    humanize response to `apply()` instead.
- *  - The detector and watermark remover compute in the browser and have no
- *    server call of their own, so they call `consume()` here before running.
+ * The detector and watermark remover are deliberately unmetered and do not use
+ * this hook — see METERED_TOOLS in lib/freeTier.js.
  *
- * @param {"humanize" | "detect" | "clean"} tool
+ * @param {"humanize"} tool
  */
 export function useQuota(tool) {
   /** @type {[null | { remaining: number, limit: number, resetAt?: string, metered: boolean }, Function]} */

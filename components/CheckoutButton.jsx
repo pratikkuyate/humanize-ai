@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { PRO_PRICE_DISPLAY, PASS_DAYS, PRO_PLAN_ID } from "@/lib/pricing";
+import { track } from "@/lib/analytics";
 
 /**
  * Razorpay checkout, start to finish.
@@ -58,6 +59,7 @@ export default function CheckoutButton({ onSuccess, className, label }) {
     setError(null);
     setNotice(null);
     setBusy(true);
+    track("checkout_start");
 
     try {
       const ready = await loadRazorpay();
@@ -110,12 +112,22 @@ export default function CheckoutButton({ onSuccess, className, label }) {
         // the button would stay in its loading state forever.
         modal: {
           ondismiss: () => {
+            track("checkout_dismissed");
             setBusy(false);
             setNotice("Checkout closed — you have not been charged.");
           },
         },
 
         handler: async (result) => {
+          // Razorpay only calls this once the charge succeeded, so the purchase
+          // is reported here, before verification settles. transaction_id lets
+          // GA4 drop a duplicate if the page reports it twice.
+          track("purchase", {
+            transaction_id: result.razorpay_payment_id,
+            value: order.amount / 100,
+            currency: order.currency,
+            plan: PRO_PLAN_ID,
+          });
           try {
             const verifyResponse = await fetch("/api/checkout/verify", {
               method: "POST",
@@ -157,6 +169,7 @@ export default function CheckoutButton({ onSuccess, className, label }) {
       // A failed payment leaves the widget open for a retry, so there is nothing
       // to reset here — just surface why it failed.
       razorpay.on("payment.failed", (event) => {
+        track("payment_failed", { reason: event?.error?.reason ?? "unknown" });
         setError(event?.error?.description ?? "The payment did not go through.");
       });
 

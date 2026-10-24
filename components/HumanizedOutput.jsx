@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import LoadingState from "./LoadingState";
+import { track } from "@/lib/analytics";
 
 /**
  * @param {{
@@ -15,6 +16,8 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
 
   async function handleCopy() {
     if (!humanizedText) return;
+    // The activation signal: a run good enough to take away.
+    track("output_copied", { tool: "humanize" });
     try {
       await navigator.clipboard.writeText(humanizedText);
       setCopied(true);

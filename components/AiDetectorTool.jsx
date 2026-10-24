@@ -4,9 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { scoreText } from "@/lib/aiScore";
 import { countWords } from "@/lib/wordCount";
-import { FREE_MAX_WORDS } from "@/lib/freeTier";
-import { useQuota } from "@/components/useQuota";
-import UpgradeModal from "@/components/UpgradeModal";
+import { track, wordBucket } from "@/lib/analytics";
 
 /**
  * Sample passages so users can try the detector instantly. The first is written
@@ -52,41 +50,28 @@ function scoreTone(score) {
 export default function AiDetectorTool() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
-  const [upgrade, setUpgrade] = useState(null);
   const sampleIndex = useState(() => ({ i: 0 }))[0];
-  const { quota, consume } = useQuota("detect");
 
   const wordCount = countWords(text);
-  const isOverLimit = wordCount > FREE_MAX_WORDS;
-  const isExhausted = quota?.metered === true && quota.remaining <= 0;
-  // Stays clickable when exhausted so the upgrade dialog can open.
-  const canAnalyze = text.trim().length > 0 && !isOverLimit;
+  // Unmetered and uncapped: scoring runs locally and costs nothing, which is
+  // what the page's "no usage limit" promise rests on.
+  const canAnalyze = text.trim().length > 0;
 
-  async function handleAnalyze() {
+  function handleAnalyze() {
     if (!canAnalyze) return;
-
-    if (isExhausted) {
-      setUpgrade({ quota, message: null });
-      return;
-    }
-
-    // Ask permission before running. Only the tool name goes to the server —
-    // the text itself never leaves the browser, which is what the page promises.
-    const { allowed, data } = await consume();
-    if (!allowed) {
-      setUpgrade({ quota: data ?? quota, message: data?.message ?? null });
-      return;
-    }
-
-    setUpgrade(null);
-    setResult(scoreText(text));
+    const next = scoreText(text);
+    setResult(next);
+    track("detector_run", {
+      words: wordBucket(wordCount),
+      score: next.tooShort ? undefined : next.score,
+    });
   }
 
   function loadSample() {
     setText(SAMPLE_TEXTS[sampleIndex.i % SAMPLE_TEXTS.length]);
     sampleIndex.i += 1;
     setResult(null);
-    setUpgrade(null);
+    track("sample_loaded", { tool: "detect" });
   }
 
   function handleKeyDown(e) {
@@ -128,24 +113,13 @@ export default function AiDetectorTool() {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Paste text to check for AI writing patterns. Nothing is uploaded — analysis runs entirely in your browser."
-          className={`w-full min-h-[300px] sm:min-h-[420px] resize-none p-5 text-sm leading-relaxed bg-transparent text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none ${
-            isOverLimit ? "text-rose-600 dark:text-rose-400" : ""
-          }`}
+          className="w-full min-h-[300px] sm:min-h-[420px] resize-none p-5 text-sm leading-relaxed bg-transparent text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none"
         />
 
         <div className="px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
           <span className="text-xs text-slate-400 dark:text-slate-500">
-            <span
-              className={
-                isOverLimit
-                  ? "text-rose-500 font-semibold"
-                  : "text-slate-600 dark:text-slate-400"
-              }
-            >
+            <span className="text-slate-600 dark:text-slate-400">
               {wordCount.toLocaleString()}
-            </span>
-            <span className="text-slate-300 dark:text-slate-600">
-              /{FREE_MAX_WORDS.toLocaleString()}
             </span>{" "}
             words
           </span>
@@ -240,6 +214,7 @@ export default function AiDetectorTool() {
               <Link
                 href="/#tool"
                 onClick={() => {
+                  track("detector_to_humanizer", { score: result.score });
                   try {
                     sessionStorage.setItem("humanize_prefill", text);
                   } catch {}
@@ -260,13 +235,6 @@ export default function AiDetectorTool() {
           </div>
         )}
       </div>
-
-      <UpgradeModal
-        open={Boolean(upgrade)}
-        onClose={() => setUpgrade(null)}
-        quota={upgrade?.quota ?? quota}
-        message={upgrade?.message}
-      />
     </div>
   );
 }

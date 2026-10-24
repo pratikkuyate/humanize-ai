@@ -4,17 +4,14 @@ import { METERED_TOOLS } from "@/lib/freeTier";
 import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
 
 /**
- * Quota endpoint for the browser-side tools (the AI detector and the Claude
- * watermark remover).
+ * Quota endpoint. The humanizer reads its remaining runs here (it spends them
+ * inside /api/humanize). The POST path exists for a browser-side tool that is
+ * metered without a server call of its own: it asks permission with the tool
+ * name only, so the user's text never leaves the page. No such tool is metered
+ * today — the detector and watermark remover were un-metered, see METERED_TOOLS
+ * in lib/freeTier.js.
  *
- * Those two compute entirely in the browser and that is a product promise —
- * every tool page states the text is never uploaded. So they ask permission
- * here rather than posting their content: the request carries the tool name and
- * nothing else, the answer is yes or no, and the user's text never leaves the
- * page. See §1 of [PRICING-PLAN.md] for why this shape was chosen over moving
- * the computation server-side.
- *
- *   GET  /api/quota?tool=detect  → read remaining, spends nothing
+ *   GET  /api/quota?tool=humanize  → read remaining, spends nothing
  *   POST /api/quota { tool }     → spend one attempt
  */
 

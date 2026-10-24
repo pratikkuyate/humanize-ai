@@ -60,12 +60,12 @@ const faqs = [
   {
     question: "How do I humanize AI text?",
     answer:
-      "Three steps. First, paste your AI-generated content into the editor — any source works, from ChatGPT to Jasper. Second, pick a writing style if you want a specific tone (casual, professional, friendly). Third, click “Humanize” and wait a few seconds. The tool returns a rewritten version next to your original so you can compare them. Copy the result, or run it again for a fresh variation. No technical skills needed, and you can try it free without creating an account.",
+      "Three steps. First, paste your AI-generated content into the editor — any source works, from ChatGPT to Jasper. Second, click “Humanize.” Third, wait while the three-stage pipeline runs — usually well under a minute. The tool returns a rewritten version next to your original so you can compare them. Copy the result, or run it again for a fresh variation. No technical skills needed, and you can try it free without creating an account.",
   },
   {
     question: "Is using an AI humanizer free?",
     answer:
-      "Yes — you can humanize text for free with a generous word limit per request, no credit card and no account required. The free tier is built so you can test the tool on real content and judge the quality yourself. Paid plans add higher word limits, batch processing, more style options, and priority speed for people who humanize content daily — writers, marketers, and agencies. But for occasional use, the free version covers most needs comfortably.",
+      "Yes — you can humanize text for free with a generous word limit per request, no credit card and no account required. The free tier is built so you can test the tool on real content and judge the quality yourself. For people who humanize content daily, Pro removes the daily run cap and the per-run word limit for 30 days, as a one-time payment with nothing that auto-renews. For occasional use, the free version covers most needs comfortably.",
   },
   {
     question: "Will humanizing change the meaning of my content?",
@@ -95,12 +95,12 @@ const faqs = [
   {
     question: "How long does it take to humanize text?",
     answer:
-      "Seconds. A typical blog post (800–1,500 words) processes in under ten seconds. Short content like social captions or email paragraphs is nearly instant. Compare that to manual humanizing — editing an AI draft by hand typically takes 30–60 minutes per article — and the time savings are the whole point. For teams, the math compounds: humanizing twenty articles a month manually costs a full workday; with the tool, it costs a few minutes total.",
+      "Usually somewhere between ten and thirty seconds. Every run goes through three AI passes — a rewrite, a self-critique, and a final polish — so a typical blog post (800–1,500 words) takes a little longer than a short email paragraph. Compare that to manual humanizing — editing an AI draft by hand typically takes 30–60 minutes per article — and the time savings are the whole point. For teams, the math compounds: humanizing twenty articles a month manually costs a full workday; with the tool, it costs a few minutes total.",
   },
   {
     question: "What types of content can I humanize?",
     answer:
-      "Almost anything written: blog posts, articles, essays, marketing emails, landing page copy, product descriptions, social media posts, reports, proposals, cover letters, newsletters, and support replies. The tool adapts to content length and adjusts to the writing style you choose. The only real limits are practical ones — extremely technical content with dense jargon (legal contracts, medical documentation) benefits less, because that writing is supposed to be formal. Everything meant for general human readers humanizes well.",
+      "Almost anything written: blog posts, articles, essays, marketing emails, landing page copy, product descriptions, social media posts, reports, proposals, cover letters, newsletters, and support replies. The tool adapts to content length and keeps the register of your original — formal stays formal, casual stays casual. The only real limits are practical ones — extremely technical content with dense jargon (legal contracts, medical documentation) benefits less, because that writing is supposed to be formal. Everything meant for general human readers humanizes well.",
   },
   {
     question: "Does the tool fix grammar mistakes too?",
@@ -110,12 +110,12 @@ const faqs = [
   {
     question: "Can I choose different writing styles?",
     answer:
-      "Yes. The tool offers multiple styles — casual, professional, friendly, confident, and academic among them — and applies your choice consistently across the whole text. This is one of the biggest gaps between a humanizer and a generic rewriter: tone becomes a deliberate setting instead of an accident. The same source paragraph can come out relaxed for a blog post, polished for a client deck, or warm for an outreach email. Pick the audience; the tool matches the voice.",
+      "Not yet — there is no style selector today. The humanizer keeps the tone of the text you paste: a formal report comes out formal, a casual post comes out casual, and only the machine patterns change. If you want a different register, set it in the prompt that produced your draft (\"write this casually\"), then humanize the result. A selectable style option is something we may add later; we won't advertise it until it exists.",
   },
   {
     question: "Is my text stored or shared when I use the tool?",
     answer:
-      "Your content stays yours. Text you paste is processed to generate your humanized version and is not published, shared, or used to train public models. For professionals working with client content or unpublished material, this matters — check the privacy policy for full details, but the short version is that confidentiality is treated as a baseline, not a premium feature. If you handle sensitive content regularly, paid plans include additional data handling commitments.",
+      "Your content stays yours. Text you paste is processed to generate your humanized version and is not published, shared, or used to train public models. For professionals working with client content or unpublished material, this matters — check the privacy policy for full details, but the short version is that confidentiality is treated as a baseline, not a premium feature. The same handling applies on every plan, free or Pro.",
   },
   {
     question: "Does humanizing work for non-English content?",
@@ -130,7 +130,7 @@ const faqs = [
   {
     question: "Can teams or agencies use this at scale?",
     answer:
-      "Absolutely — scale is where the tool earns its keep. Paid plans support higher volume, batch processing, and consistent style settings you can match to each client’s brand voice. The typical agency workflow: generate drafts with AI, humanize with the right style per client, then do a fast editorial pass. Editing time per piece drops from an hour to minutes, which directly improves margins. If you publish more than a handful of pieces weekly, the volume features pay for themselves quickly.",
+      "Yes, one piece at a time. Pro removes the daily run cap and the per-run word limit, which is what matters once you are humanizing several pieces a day. The typical agency workflow: generate drafts with AI, humanize each one, then do a fast editorial pass for client voice and facts. Editing time per piece drops from an hour to minutes. There is no batch upload or shared team workspace today — each person runs the tool individually.",
   },
   {
     question: "Is it ethical to use an AI humanizer?",
@@ -145,7 +145,7 @@ const faqs = [
   {
     question: "Can I humanize the same text multiple times?",
     answer:
-      "Yes, and it’s genuinely useful. Each pass produces a fresh variation — different sentence structures, different word choices — so if the first output isn’t quite the voice you wanted, run it again instead of settling. Writers use this to generate options: three variations of an intro paragraph, pick the best, move on. Re-running also lets you try the same content in different styles (casual vs. professional) to see which fits your audience before publishing.",
+      "Yes, and it’s genuinely useful. Each pass produces a fresh variation — different sentence structures, different word choices — so if the first output isn’t quite the voice you wanted, run it again instead of settling. Writers use this to generate options: three variations of an intro paragraph, pick the best, move on. Each re-run counts as one run on the free plan.",
   },
   {
     question: "Do I still need a human editor after humanizing?",
@@ -179,7 +179,6 @@ const softwareJsonLd = {
   },
   featureList: [
     "Natural language rewriting",
-    "Multiple writing styles",
     "SEO keyword preservation",
     "Grammar enhancement",
     "Readability improvement",
@@ -566,15 +565,14 @@ export default function Home() {
             </P>
             <P>
               The tool smooths transitions between paragraphs so ideas flow instead of jumping. It
-              checks the reading level and nudges complex phrasing toward clear, everyday language.
-              If you’ve chosen a writing style — casual, professional, friendly, academic — this is
-              where that tone gets applied consistently from the first line to the last.
+              checks the reading level and nudges complex phrasing toward clear, everyday language,
+              while keeping the overall register of your original from the first line to the last.
             </P>
             <P>The goal of this pass is simple: text that a reader moves through without ever stumbling.</P>
 
             <H3>Step 5: Get Your Humanized Output</H3>
             <P>
-              Within seconds, your rewritten text appears side by side with the original. Compare
+              Usually within half a minute, your rewritten text appears side by side with the original. Compare
               them line by line. Copy the result with one click, or run it through again if you want
               a different variation — every pass produces a fresh take, so you’re never stuck with
               one option.
@@ -611,10 +609,9 @@ export default function Home() {
             <H3>⚡ Fast Processing</H3>
             <P>
               Speed matters when humanizing is part of your daily workflow. Paste your text and get
-              results in seconds — not minutes. The engine handles short social captions and
-              2,000-word articles at the same pace, so you’re never watching a loading bar when you
-              should be publishing. Batch through a week’s worth of content in a single coffee
-              break.
+              results in well under a minute — not the 30 to 60 minutes a manual editing pass
+              takes. Three AI passes run back to back on every request, so a 2,000-word article
+              takes a little longer than a social caption, but neither keeps you waiting long.
             </P>
 
             <H3>✍️ Natural Language Rewriting</H3>
@@ -627,13 +624,13 @@ export default function Home() {
               text.” It reads like writing.
             </P>
 
-            <H3>🎨 Multiple Writing Styles</H3>
+            <H3>🎨 Keeps Your Tone</H3>
             <P>
               One voice doesn’t fit every job. A LinkedIn post shouldn’t sound like a research
-              summary, and a product description shouldn’t sound like a personal blog. Choose from
-              multiple writing styles — casual, professional, friendly, confident, or academic — and
-              the humanizer applies that tone consistently across your entire text. Same content,
-              right voice for the right audience.
+              summary, and a product description shouldn’t sound like a personal blog. The
+              humanizer keeps the register of the text you give it — formal stays formal, casual
+              stays casual — and changes only the machine patterns underneath. Write the draft in
+              the voice you want; the tool makes it read like a person wrote it.
             </P>
 
             <H3>🔍 SEO-Friendly Output</H3>
@@ -866,7 +863,7 @@ export default function Home() {
                     ["Approach", "Synonym swapping", "Full voice restructuring"],
                     ["Sentence rhythm", "Unchanged (still monotone)", "Varied, natural pacing"],
                     ["Meaning accuracy", "Often drifts", "Locked and preserved"],
-                    ["Tone control", "None or basic", "Multiple selectable styles"],
+                    ["Tone", "Often flattened", "Your original register kept"],
                     ["Readability", "Frequently gets worse", "Measurably improves"],
                     ["SEO keywords", "Sometimes destroyed", "Preserved in context"],
                     ["Output feel", "“Reworded AI text”", "“A person wrote this”"],
@@ -983,9 +980,8 @@ export default function Home() {
               yourself, side by side with the original.
             </P>
             <P>
-              Thousands of writers, marketers, students, and teams already use this as the final
-              step in their content workflow. They kept the speed of AI writing. They got their
-              voice back. The two were never supposed to be a trade-off.
+              Use it as the final step in your content workflow. Keep the speed of AI writing and
+              get your voice back. The two were never supposed to be a trade-off.
             </P>
             <P>
               Your readers can tell the difference between content that was generated and content

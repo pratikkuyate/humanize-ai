@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { removeWatermark, KNOWN_CHAR_COUNT } from "@/lib/watermarkChars";
 import { countWords } from "@/lib/wordCount";
-import { FREE_MAX_WORDS } from "@/lib/freeTier";
-import { useQuota } from "@/components/useQuota";
-import UpgradeModal from "@/components/UpgradeModal";
+import { track, wordBucket } from "@/lib/analytics";
 
 /**
  * A short passage laced with the markers Claude output actually carries: narrow
@@ -62,34 +60,18 @@ export default function WatermarkRemoverTool() {
   /** @type {[ReturnType<typeof removeWatermark> | null, React.Dispatch<any>]} */
   const [result, setResult] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [upgrade, setUpgrade] = useState(null);
-  const { quota, consume } = useQuota("clean");
 
   const charCount = text.length;
   const wordCount = countWords(text);
-  const isOverLimit = wordCount > FREE_MAX_WORDS;
-  const isExhausted = quota?.metered === true && quota.remaining <= 0;
-  // Stays clickable when exhausted so the upgrade dialog can open.
-  const canClean = text.trim().length > 0 && !isOverLimit;
+  // Unmetered and uncapped: the scan runs locally and costs nothing, which is
+  // what the page's "no usage limit" promise rests on.
+  const canClean = text.trim().length > 0;
 
-  async function handleClean() {
+  function handleClean() {
     if (!canClean) return;
-
-    if (isExhausted) {
-      setUpgrade({ quota, message: null });
-      return;
-    }
-
-    // Permission check only — the text stays in the browser, as the page promises.
-    const { allowed, data } = await consume();
-    if (!allowed) {
-      setUpgrade({ quota: data ?? quota, message: data?.message ?? null });
-      return;
-    }
-
-    setUpgrade(null);
     setResult(removeWatermark(text, { normalizeTypography }));
     setCopied(false);
+    track("watermark_clean", { words: wordBucket(wordCount), typography: normalizeTypography });
   }
 
   /** @param {boolean} next */
@@ -103,14 +85,13 @@ export default function WatermarkRemoverTool() {
     setText(SAMPLE_TEXT);
     setResult(null);
     setCopied(false);
-    setUpgrade(null);
+    track("sample_loaded", { tool: "clean" });
   }
 
   function handleClear() {
     setText("");
     setResult(null);
     setCopied(false);
-    setUpgrade(null);
   }
 
   /** @param {React.KeyboardEvent<HTMLTextAreaElement>} e */
@@ -123,6 +104,7 @@ export default function WatermarkRemoverTool() {
 
   async function handleCopy() {
     if (!result?.cleaned) return;
+    track("output_copied", { tool: "clean" });
     try {
       await navigator.clipboard.writeText(result.cleaned);
     } catch {
@@ -177,9 +159,7 @@ export default function WatermarkRemoverTool() {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Paste text copied out of Claude. The scan runs entirely in your browser — nothing is uploaded."
-          className={`w-full min-h-[260px] sm:min-h-[360px] resize-none p-5 text-sm leading-relaxed bg-transparent text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none ${
-            isOverLimit ? "text-rose-600 dark:text-rose-400" : ""
-          }`}
+          className="w-full min-h-[260px] sm:min-h-[360px] resize-none p-5 text-sm leading-relaxed bg-transparent text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none"
         />
 
         <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800">
@@ -202,14 +182,10 @@ export default function WatermarkRemoverTool() {
 
         <div className="px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
           <span className="text-xs text-slate-400 dark:text-slate-500">
-            <span
-              className={
-                isOverLimit ? "text-rose-500 font-semibold" : "text-slate-600 dark:text-slate-400"
-              }
-            >
+            <span className="text-slate-600 dark:text-slate-400">
               {wordCount.toLocaleString()}
             </span>{" "}
-            / {FREE_MAX_WORDS.toLocaleString()} words
+            words
           </span>
           <div className="flex gap-2">
             {text && (
@@ -355,13 +331,6 @@ export default function WatermarkRemoverTool() {
           </>
         )}
       </div>
-
-      <UpgradeModal
-        open={Boolean(upgrade)}
-        onClose={() => setUpgrade(null)}
-        quota={upgrade?.quota ?? quota}
-        message={upgrade?.message}
-      />
     </div>
   );
 }

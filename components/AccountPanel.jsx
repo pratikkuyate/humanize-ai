@@ -85,7 +85,7 @@ export default function AccountPanel({ checkoutReady }) {
 
       {justUpgraded && (
         <p className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300">
-          You are Pro. All three tools are unlocked — no daily cap, no word limit.
+          You are Pro. The humanizer is unlocked — no daily cap, no word limit.
         </p>
       )}
 
@@ -110,7 +110,7 @@ export default function AccountPanel({ checkoutReady }) {
         {isPro ? (
           <>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Unlimited runs on every tool. Your pass runs until{" "}
+              Unlimited humanizer runs. Your pass runs until{" "}
               <strong className="text-slate-900 dark:text-white">{expiry}</strong> —{" "}
               {remaining} {remaining === 1 ? "day" : "days"} left.
             </p>
@@ -121,7 +121,7 @@ export default function AccountPanel({ checkoutReady }) {
           </>
         ) : (
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            {FREE_ATTEMPTS} runs a day on each tool. Go Pro for {PRO_PRICE_DISPLAY} to remove the
+            {FREE_ATTEMPTS} humanizer runs a day. Go Pro for {PRO_PRICE_DISPLAY} to remove the
             daily cap and the per-run word limit for {PASS_DAYS} days.
           </p>
         )}

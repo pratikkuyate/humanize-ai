@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { proPlan, PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { track } from "@/lib/analytics";
 
 /**
  * The upgrade dialog shown the moment someone runs out of free runs.
@@ -21,6 +22,12 @@ import { proPlan, PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
  */
 export default function UpgradeModal({ open, onClose, quota, message }) {
   const closeRef = useRef(null);
+
+  // Keyed on `open` alone: callers pass an inline onClose, so the effect below
+  // re-runs on every parent render and would report one view many times.
+  useEffect(() => {
+    if (open) track("upgrade_modal_view");
+  }, [open]);
 
   // Escape to dismiss, and hold the background still while the dialog is up.
   useEffect(() => {
@@ -130,6 +137,7 @@ export default function UpgradeModal({ open, onClose, quota, message }) {
 
           <Link
             href={proPlan.ctaHref}
+            onClick={() => track("upgrade_click", { source: "modal" })}
             className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm"
           >
             {proPlan.cta} →

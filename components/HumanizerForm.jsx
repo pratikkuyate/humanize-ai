@@ -5,6 +5,7 @@ import { countWords } from "@/lib/wordCount";
 import { FREE_MAX_WORDS, MIN_LENGTH } from "@/lib/freeTier";
 import { useQuota } from "@/components/useQuota";
 import UpgradeModal from "@/components/UpgradeModal";
+import { track, wordBucket } from "@/lib/analytics";
 
 /**
  * Deliberately AI-sounding sample passages so users can try the tool without
@@ -41,6 +42,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       if (prefill) {
         setText(prefill);
         sessionStorage.removeItem("humanize_prefill");
+        track("humanize_prefilled", { source: "detector" });
       }
     } catch {}
   }, []);
@@ -67,6 +69,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
     setText(SAMPLE_TEXTS[sampleIndexRef.current % SAMPLE_TEXTS.length]);
     sampleIndexRef.current += 1;
     if (error) setError("");
+    track("sample_loaded", { tool: "humanize" });
   }
 
   async function handleSubmit() {
@@ -74,12 +77,17 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
 
     // Out of runs — prompt instead of spending a request we know will 429.
     if (isExhausted) {
+      track("quota_hit", { tool: "humanize" });
       setUpgrade({ quota, message: null });
       return;
     }
 
     setError("");
     onLoadingChange(true);
+
+    const words = wordBucket(wordCount);
+    const startedAt = Date.now();
+    track("humanize_submit", { words });
 
     try {
       const response = await fetch("/api/humanize", {
@@ -93,11 +101,13 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       if (response.status === 429 && data.error === "quota_exceeded") {
         const next = { remaining: 0, limit: data.limit, resetAt: data.resetAt, metered: true };
         apply(next);
+        track("quota_hit", { tool: "humanize" });
         setUpgrade({ quota: next, message: data.message ?? null });
         return;
       }
 
       if (!data.success) {
+        track("humanize_error", { status: response.status, words });
         setError(data.error ?? "An unexpected error occurred.");
         return;
       }
@@ -105,8 +115,15 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       // The API already spent the attempt; adopt its count rather than
       // decrementing here, or the run would be charged twice.
       apply(data.quota);
+      track("humanize_success", {
+        words,
+        duration_ms: Date.now() - startedAt,
+        pro: Boolean(data.quota?.pro),
+        remaining: data.quota?.metered ? data.quota.remaining : undefined,
+      });
       onResult({ humanizedText: data.humanizedText, metadata: data.metadata });
     } catch {
+      track("humanize_error", { status: 0, words });
       setError("Network error. Please check your connection and try again.");
     } finally {
       onLoadingChange(false);

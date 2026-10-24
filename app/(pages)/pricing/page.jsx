@@ -14,11 +14,11 @@ const pageUrl = `${siteUrl}/pricing`;
 
 export const metadata = {
   title: `Pricing — Unlimited AI Humanizing for ${PRO_PRICE_DISPLAY}`,
-  description: `Simply Humanize pricing. Free forever with ${FREE_ATTEMPTS} runs a day and no sign-up, or go unlimited for ${PRO_PRICE_DISPLAY} — ${PASS_DAYS} days with no daily cap, no word limit, all three tools.`,
+  description: `Simply Humanize pricing. Free forever with ${FREE_ATTEMPTS} humanizer runs a day and no sign-up, or go unlimited for ${PRO_PRICE_DISPLAY} — ${PASS_DAYS} days with no daily cap and no word limit. The AI detector and watermark remover are always free.`,
   alternates: { canonical: pageUrl },
   openGraph: {
     title: `Pricing — Unlimited AI Humanizing for ${PRO_PRICE_DISPLAY}`,
-    description: `Free forever with ${FREE_ATTEMPTS} runs a day, or ${PASS_DAYS} days unlimited for ${PRO_PRICE_DISPLAY}.`,
+    description: `Free forever with ${FREE_ATTEMPTS} humanizer runs a day, or ${PASS_DAYS} days unlimited for ${PRO_PRICE_DISPLAY}.`,
     url: pageUrl,
     type: "website",
     siteName: "Simply Humanize",
@@ -36,11 +36,11 @@ export const metadata = {
 const faqs = [
   {
     q: "Is there a free plan?",
-    a: `Yes, and it does not expire. You get ${FREE_ATTEMPTS} runs a day on each tool — the humanizer, the AI detector, and the Claude watermark remover — with up to ${FREE_MAX_WORDS.toLocaleString()} words per run. No account and no card required.`,
+    a: `Yes, and it does not expire. You get ${FREE_ATTEMPTS} humanizer runs a day with up to ${FREE_MAX_WORDS.toLocaleString()} words per run. The AI detector and the Claude watermark remover run in your browser and have no usage limit at all. No account and no card required.`,
   },
   {
     q: `What does ${PRO_PRICE_DISPLAY} get me?`,
-    a: `Unlimited runs for ${PASS_DAYS} days. No daily cap and no word limit on any of the three tools, plus priority processing when demand is high. It is a one-time payment, not a subscription.`,
+    a: `Unlimited humanizer runs for ${PASS_DAYS} days, with no daily cap and no per-run word limit. It is a one-time payment, not a subscription.`,
   },
   {
     q: "Do I need an account to use the free plan?",
@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     q: "What happens when I hit the daily limit?",
-    a: "The tool pauses and shows you the upgrade option. Your free runs come back automatically the next day, so you can wait it out at no cost if you would rather not subscribe.",
+    a: "The humanizer pauses and shows you the upgrade option. The AI detector and watermark remover keep working. Your free runs come back automatically the next day, so you can wait it out at no cost if you would rather not subscribe.",
   },
   {
     q: "Is my text stored?",
