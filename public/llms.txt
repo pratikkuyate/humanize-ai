@@ -60,6 +60,7 @@ Key facts:
 - [Words ChatGPT Overuses: The Complete List](https://simplyhumanize.com/blog/words-chatgpt-overuses): Categorized list of AI-typical vocabulary and phrases, why models overuse them, and how to edit them out.
 - [Why Does ChatGPT Use So Many Em Dashes?](https://simplyhumanize.com/blog/chatgpt-em-dashes): The mechanics behind the em-dash tell and how to fix AI-typical dash density.
 - [Does Turnitin Detect ChatGPT?](https://simplyhumanize.com/blog/does-turnitin-detect-chatgpt): How Turnitin's AI detection works, its accuracy record, and what students should do.
+- [Does Turnitin Detect AI Humanizers?](https://simplyhumanize.com/blog/does-turnitin-detect-ai-humanizers): Turnitin's AI bypasser detection (August 2025) explained, independent test results, its limits, and what students should do instead.
 - [AI Detector False Positives](https://simplyhumanize.com/blog/ai-detector-false-positives): Why human writing gets flagged as AI, who gets flagged most, and what to do about it.
 - [How to Humanize AI Text: The Complete Guide](https://simplyhumanize.com/blog/how-to-humanize-ai-text): Manual editing checklist, prompting techniques, and automated humanizing compared.
 - [How to Make ChatGPT Sound More Human](https://simplyhumanize.com/blog/make-chatgpt-sound-more-human): Copy-paste prompts that reduce robotic output, and why prompting alone plateaus.
