@@ -538,6 +538,24 @@ export default function ClaudeWatermarkRemoverPage() {
               </li>
               <li>
                 <Link
+                  href="/tools/em-dash-remover"
+                  className="text-violet-600 dark:text-violet-400 hover:underline font-medium"
+                >
+                  Em dash remover
+                </Link>{" "}
+                — replace each em dash with commas, parentheses or periods instead of a plain hyphen.
+              </li>
+              <li>
+                <Link
+                  href="/tools/invisible-character-remover"
+                  className="text-violet-600 dark:text-violet-400 hover:underline font-medium"
+                >
+                  Invisible character remover
+                </Link>{" "}
+                — the same hidden-character scan for text from any source, not just Claude.
+              </li>
+              <li>
+                <Link
                   href="/blog/chatgpt-em-dashes"
                   className="text-violet-600 dark:text-violet-400 hover:underline font-medium"
                 >
