@@ -46,9 +46,9 @@ const tools = [
 ];
 
 export const metadata = {
-  title: "Free AI Writing Tools — Detector, Watermark Remover & Humanizer",
+  title: "Free AI Writing Tools — Detector & Humanizer",
   description:
-    "Free AI writing tools from Simply Humanize: an AI content detector that explains its score, a Claude watermark remover, and an AI humanizer. The detector and remover run in your browser with no usage limit and no sign-up.",
+    "Free AI writing tools: an AI content detector that explains its score, a Claude watermark remover, and an AI humanizer. No sign-up needed.",
   alternates: { canonical: pageUrl },
   openGraph: {
     title: "Free AI Writing Tools — Simply Humanize",

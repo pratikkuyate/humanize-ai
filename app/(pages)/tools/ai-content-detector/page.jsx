@@ -3,7 +3,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { ExternalLink, renderInline, plainText } from "@/components/InlineText";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
 
 const AiDetectorTool = dynamic(() => import("@/components/AiDetectorTool"), {
   loading: () => (
@@ -17,7 +17,7 @@ const AiDetectorTool = dynamic(() => import("@/components/AiDetectorTool"), {
 export const metadata = {
   title: "Free AI Content Detector — No Sign-Up",
   description:
-    "Free AI content detector. Paste your text and instantly see the AI writing patterns it carries — sentence-length uniformity, clichés, hedging, and more. Runs entirely in your browser. No sign-up, nothing uploaded.",
+    "Free AI content detector that explains its score: sentence uniformity, clichés, hedging and more. Runs in your browser — no sign-up, nothing uploaded.",
   alternates: { canonical: `${siteUrl}/tools/ai-content-detector` },
   openGraph: {
     title: "Free AI Content Detector — No Sign-Up",
@@ -69,20 +69,27 @@ function buildFaqSchema() {
   };
 }
 
-function buildBreadcrumbSchema() {
+// BreadcrumbList JSON-LD comes from <Breadcrumbs> below — don't add a second copy here.
+function buildAppSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-      { "@type": "ListItem", position: 2, name: "Tools", item: `${siteUrl}/tools` },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: "AI Content Detector",
-        item: `${siteUrl}/tools/ai-content-detector`,
-      },
+    "@type": "WebApplication",
+    name: "AI Content Detector",
+    url: `${siteUrl}/tools/ai-content-detector`,
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any (web browser)",
+    browserRequirements: "Requires JavaScript",
+    description:
+      "Free browser-based AI content detector that scores text for six AI writing patterns and explains each signal. Nothing is uploaded.",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    featureList: [
+      "Per-signal breakdown: sentence-length uniformity, clichés, hedging, passive voice, repeated openers",
+      "Runs entirely in the browser — nothing is uploaded",
+      "No sign-up or account required",
+      "No usage limit",
     ],
+    isAccessibleForFree: true,
+    publisher: { "@type": "Organization", name: "Simply Humanize", url: siteUrl },
   };
 }
 
@@ -95,7 +102,7 @@ export default function AiContentDetectorPage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbSchema()) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildAppSchema()) }}
       />
 
       {/* Hero */}
