@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
 import { ExternalLink, renderInline, plainText } from "@/components/InlineText";
 import { languageAlternates } from "@/lib/languages";
+import { PRO_PRICE_USD, PASS_DAYS } from "@/lib/pricing";
 
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
@@ -172,11 +173,21 @@ const softwareJsonLd = {
   operatingSystem: "Web",
   description:
     "Free AI humanizer that rewrites AI-generated text from ChatGPT, Claude, Gemini, and other models into natural, human-sounding writing while preserving meaning and SEO keywords.",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Free",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    {
+      "@type": "Offer",
+      name: `Pro — ${PASS_DAYS}-day pass`,
+      price: String(PRO_PRICE_USD),
+      priceCurrency: "USD",
+      url: `${siteUrl}/pricing`,
+    },
+  ],
   featureList: [
     "Natural language rewriting",
     "SEO keyword preservation",
