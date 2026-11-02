@@ -18,6 +18,8 @@ const staticPaths = [
   "/tools",
   "/tools/ai-content-detector",
   "/tools/claude-watermark-remover",
+  "/tools/em-dash-remover",
+  "/tools/invisible-character-remover",
   "/blog",
 ];
 
