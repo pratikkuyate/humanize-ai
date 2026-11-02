@@ -13,6 +13,8 @@ const pageLinks = [
 const toolLinks = [
   { label: "AI Content Detector", href: "/tools/ai-content-detector" },
   { label: "Claude Watermark Remover", href: "/tools/claude-watermark-remover" },
+  { label: "Em Dash Remover", href: "/tools/em-dash-remover" },
+  { label: "Invisible Character Remover", href: "/tools/invisible-character-remover" },
   { label: "AI Text Humanizer", href: "/#tool" },
   { label: "All Free Tools", href: "/tools" },
 ];
