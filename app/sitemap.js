@@ -3,84 +3,48 @@ import { aiModels } from "@/lib/aiModels";
 import { languages } from "@/lib/languages";
 import { posts } from "@/lib/posts";
 
+/**
+ * Last real content change per static page (YYYY-MM-DD). Bump a date only when
+ * that page's content genuinely changes — a lastmod that moves on every deploy
+ * teaches crawlers to ignore it.
+ */
+const staticPages = [
+  { path: "/", lastUpdated: "2026-11-02", changeFrequency: "weekly", priority: 1 },
+  { path: "/pricing", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/about", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/contact", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.4 },
+  { path: "/privacy-policy", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.3 },
+  { path: "/terms", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.3 },
+  { path: "/use-cases", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/tools", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/tools/ai-content-detector", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/tools/claude-watermark-remover", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.8 },
+];
+
 export default function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com";
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
   return [
-    {
-      url: `${baseUrl}/`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/pricing`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/use-cases`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/tools`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/tools/ai-content-detector`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/claude-watermark-remover`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
+    ...staticPages.map((p) => ({
+      url: `${baseUrl}${p.path}`,
+      lastModified: new Date(p.lastUpdated),
+      changeFrequency: p.changeFrequency,
+      priority: p.priority,
+    })),
     ...useCases.map((uc) => ({
       url: `${baseUrl}/ai-humanizer-for/${uc.slug}`,
-      lastModified: new Date(),
+      lastModified: new Date(uc.lastUpdated),
       changeFrequency: 'monthly',
       priority: 0.7,
     })),
     ...aiModels.map((m) => ({
       url: `${baseUrl}${m.urlPath}`,
-      lastModified: new Date(),
+      lastModified: new Date(m.lastUpdated),
       changeFrequency: 'monthly',
       priority: 0.7,
     })),
     ...languages.map((l) => ({
       url: `${baseUrl}/${l.slug}`,
-      lastModified: new Date(),
+      lastModified: new Date(l.lastUpdated),
       changeFrequency: 'monthly',
       priority: 0.7,
     })),
