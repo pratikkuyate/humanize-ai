@@ -36,6 +36,22 @@ const tools = [
     badge: "Unlimited · in your browser",
   },
   {
+    name: "Em Dash Remover",
+    href: "/tools/em-dash-remover",
+    summary:
+      "Replace every em dash in AI text with commas, parentheses, periods or a plain hyphen. Paired dashes around an aside are handled together, and number ranges like 2019–2024 are left alone.",
+    when: "Use it when a draft is full of the dashes readers now associate with ChatGPT.",
+    badge: "Unlimited · in your browser",
+  },
+  {
+    name: "Invisible Character Remover",
+    href: "/tools/invisible-character-remover",
+    summary:
+      "Find and strip zero-width spaces, no-break spaces, byte order marks, direction marks and hidden Unicode tag characters from any text, with a list of exactly what was found.",
+    when: "Use it when search, a formula or code fails on text that looks fine, or before pasting into a CMS.",
+    badge: "Unlimited · in your browser",
+  },
+  {
     name: "AI Humanizer",
     href: "/#tool",
     summary:
@@ -53,7 +69,7 @@ export const metadata = {
   openGraph: {
     title: "Free AI Writing Tools — Simply Humanize",
     description:
-      "An AI content detector that explains its score, a Claude watermark remover, and an AI humanizer. Free, no sign-up.",
+      "An AI content detector that explains its score, an em dash remover, hidden-character cleaners, and an AI humanizer. Free, no sign-up.",
     url: pageUrl,
     type: "website",
   },
@@ -61,14 +77,14 @@ export const metadata = {
     card: "summary_large_image",
     title: "Free AI Writing Tools — Simply Humanize",
     description:
-      "An AI content detector that explains its score, a Claude watermark remover, and an AI humanizer. Free, no sign-up.",
+      "An AI content detector that explains its score, an em dash remover, hidden-character cleaners, and an AI humanizer. Free, no sign-up.",
   },
 };
 
 const faqs = [
   {
     q: "Are these tools really free?",
-    a: `Yes. The AI Content Detector and the Claude Watermark Remover run entirely in your browser, so they cost nothing to operate and have no usage limit. The AI Humanizer is free for ${FREE_ATTEMPTS} runs a day; Pro removes that cap if you need more.`,
+    a: `Yes. The AI Content Detector, Claude Watermark Remover, Em Dash Remover and Invisible Character Remover run entirely in your browser, so they cost nothing to operate and have no usage limit. The AI Humanizer is free for ${FREE_ATTEMPTS} runs a day; Pro removes that cap if you need more.`,
   },
   {
     q: "Do I need an account?",
@@ -76,7 +92,7 @@ const faqs = [
   },
   {
     q: "Is my text uploaded anywhere?",
-    a: "Not by the detector or the watermark remover — both run locally with JavaScript and never send your text to a server. The humanizer has to send your text to process it; it is used to generate your result and is not stored afterwards.",
+    a: "Not by the detector, the watermark remover, the em dash remover or the invisible character remover — all four run locally with JavaScript and never send your text to a server. The humanizer has to send your text to process it; it is used to generate your result and is not stored afterwards.",
   },
   {
     q: "Which tool should I start with?",
@@ -126,8 +142,8 @@ export default function ToolsPage() {
           </h1>
           <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
             Check text for AI writing patterns, clean the hidden characters AI tools leave behind,
-            and rewrite what still reads as machine-made. No sign-up. The detector and the
-            watermark remover run entirely in your browser, with no usage limit.
+            fix AI-style em dashes, and rewrite what still reads as machine-made. No sign-up.
+            Every tool except the humanizer runs entirely in your browser, with no usage limit.
           </p>
         </div>
       </section>

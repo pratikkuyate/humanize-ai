@@ -8,8 +8,8 @@
 
 Key facts:
 - Free plan: 3 humanizer runs a day, up to 7,000 words per run, no account and
-  no card. The AI Content Detector and Claude Watermark Remover run in the browser
-  and are free with no usage limit. Pro: $9 for 30 days of unlimited humanizer runs
+  no card. The AI Content Detector, Claude Watermark Remover, Em Dash Remover and
+  Invisible Character Remover run in the browser and are free with no usage limit. Pro: $9 for 30 days of unlimited humanizer runs
   with no daily cap and no word limit. Pro is a one-time payment, not a
   subscription — nothing auto-renews.
 - An account is only needed for Pro. Every free tool works without signing up.
@@ -30,6 +30,8 @@ Key facts:
 ## Free tools
 - [AI Content Detector](https://simplyhumanize.com/tools/ai-content-detector): Free browser-based detector that scores text for six AI writing patterns (sentence uniformity, clichés, hedging, passive voice, repeated openers) with a transparent per-signal breakdown. Nothing is uploaded.
 - [Claude Watermark Remover](https://simplyhumanize.com/tools/claude-watermark-remover): Free browser-based remover for the hidden Unicode characters Claude leaves in copied text (narrow no-break spaces, zero-width characters, Unicode tag characters). Explains what the "Claude watermark" actually is; nothing is uploaded.
+- [Em Dash Remover](https://simplyhumanize.com/tools/em-dash-remover): Free browser-based tool that replaces em dashes in AI text with commas, parentheses, periods or a spaced hyphen. Handles paired dashes around an aside; leaves number ranges such as 2019–2024 alone. Nothing is uploaded.
+- [Invisible Character Remover](https://simplyhumanize.com/tools/invisible-character-remover): Free browser-based tool that finds and strips zero-width spaces, no-break spaces, byte order marks, direction marks and Unicode tag characters from any text, listing each character found. Keeps emoji joiners intact; nothing is uploaded.
 - [All free tools](https://simplyhumanize.com/tools): Hub page listing every free Simply Humanize tool, with what each one does and when to use it.
 
 ## Humanize by AI model

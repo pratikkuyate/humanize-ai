@@ -19,6 +19,8 @@ const staticPages = [
   { path: "/tools", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.6 },
   { path: "/tools/ai-content-detector", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.8 },
   { path: "/tools/claude-watermark-remover", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/tools/em-dash-remover", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/tools/invisible-character-remover", lastUpdated: "2026-11-02", changeFrequency: "monthly", priority: 0.8 },
 ];
 
 export default function sitemap() {

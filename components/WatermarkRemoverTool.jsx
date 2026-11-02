@@ -21,6 +21,49 @@ const SAMPLE_TEXT =
   "last sentence,\u200B and a \u201Ctag\u201D character riding along at the " +
   "end.\u{E0041} Paste your own text to check it\u2026";
 
+/**
+ * The same problem from any source: a zero-width space inside a word (the
+ * classic "why won't find/search match" bug), a BOM, a no-break space, a
+ * direction mark, and a hidden tag character.
+ */
+const GENERIC_SAMPLE_TEXT =
+  "This para\u200bgraph looks normal, but \u201cfind\u201d won\u2019t match " +
+  "the word \u201cparagraph\u201d.\ufeff It also hides a no-break\u00a0space, " +
+  "a left-to-right mark\u200e, and a tag character.\u{E0041} Paste your own " +
+  "text to see what it carries.";
+
+/**
+ * Wording per page. "claude" is the Claude watermark remover; "generic" is the
+ * invisible character remover, which only strips hidden characters by default
+ * because people arriving there want nothing else changed.
+ */
+const VARIANTS = {
+  claude: {
+    sample: SAMPLE_TEXT,
+    heading: "Paste Claude text",
+    inputLabel: "Text to remove the Claude watermark from",
+    placeholder:
+      "Paste text copied out of Claude. The scan runs entirely in your browser \u2014 nothing is uploaded.",
+    button: "Remove watermark",
+    noneFound: "No watermark characters found",
+    trackEvent: "watermark_clean",
+    trackTool: "clean",
+    normalizeByDefault: true,
+  },
+  generic: {
+    sample: GENERIC_SAMPLE_TEXT,
+    heading: "Paste your text",
+    inputLabel: "Text to remove invisible characters from",
+    placeholder:
+      "Paste text from anywhere: ChatGPT, Word, a PDF, a website. The scan runs entirely in your browser \u2014 nothing is uploaded.",
+    button: "Remove invisible characters",
+    noneFound: "No invisible characters found",
+    trackEvent: "invisible_clean",
+    trackTool: "invisible",
+    normalizeByDefault: false,
+  },
+};
+
 function CopyIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -53,9 +96,11 @@ const GROUP_STYLE = {
     "bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800",
 };
 
-export default function WatermarkRemoverTool() {
+/** @param {{ variant?: keyof typeof VARIANTS }} props */
+export default function WatermarkRemoverTool({ variant = "claude" }) {
+  const copy = VARIANTS[variant];
   const [text, setText] = useState("");
-  const [normalizeTypography, setNormalizeTypography] = useState(true);
+  const [normalizeTypography, setNormalizeTypography] = useState(copy.normalizeByDefault);
 
   /** @type {[ReturnType<typeof removeWatermark> | null, React.Dispatch<any>]} */
   const [result, setResult] = useState(null);
@@ -71,7 +116,7 @@ export default function WatermarkRemoverTool() {
     if (!canClean) return;
     setResult(removeWatermark(text, { normalizeTypography }));
     setCopied(false);
-    track("watermark_clean", { words: wordBucket(wordCount), typography: normalizeTypography });
+    track(copy.trackEvent, { words: wordBucket(wordCount), typography: normalizeTypography });
   }
 
   /** @param {boolean} next */
@@ -82,10 +127,10 @@ export default function WatermarkRemoverTool() {
   }
 
   function loadSample() {
-    setText(SAMPLE_TEXT);
+    setText(copy.sample);
     setResult(null);
     setCopied(false);
-    track("sample_loaded", { tool: "clean" });
+    track("sample_loaded", { tool: copy.trackTool });
   }
 
   function handleClear() {
@@ -104,7 +149,7 @@ export default function WatermarkRemoverTool() {
 
   async function handleCopy() {
     if (!result?.cleaned) return;
-    track("output_copied", { tool: "clean" });
+    track("output_copied", { tool: copy.trackTool });
     try {
       await navigator.clipboard.writeText(result.cleaned);
     } catch {
@@ -133,7 +178,7 @@ export default function WatermarkRemoverTool() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-violet-500" />
             <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              Paste Claude text
+              {copy.heading}
             </h2>
           </div>
           <div className="flex items-center gap-3">
@@ -151,14 +196,14 @@ export default function WatermarkRemoverTool() {
         </div>
 
         <label htmlFor="watermark-input" className="sr-only">
-          Text to remove the Claude watermark from
+          {copy.inputLabel}
         </label>
         <textarea
           id="watermark-input"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Paste text copied out of Claude. The scan runs entirely in your browser — nothing is uploaded."
+          placeholder={copy.placeholder}
           className="w-full min-h-[260px] sm:min-h-[360px] resize-none p-5 text-sm leading-relaxed bg-transparent text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none"
         />
 
@@ -203,7 +248,7 @@ export default function WatermarkRemoverTool() {
               disabled={!canClean}
               className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-95 transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
             >
-              Remove watermark
+              {copy.button}
             </button>
           </div>
         </div>
@@ -281,7 +326,7 @@ export default function WatermarkRemoverTool() {
                 }`}
               >
                 {isClean
-                  ? "No watermark characters found"
+                  ? copy.noneFound
                   : `${totalFound.toLocaleString()} marker${totalFound === 1 ? "" : "s"} removed`}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
