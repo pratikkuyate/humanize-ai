@@ -35,9 +35,9 @@ Key facts:
 - [All free tools](https://simplyhumanize.com/tools): Hub page listing every free Simply Humanize tool, with what each one does and when to use it.
 
 ## Humanize by AI model
-- [Humanize ChatGPT text](https://simplyhumanize.com/humanize-chatgpt-text): Rewrite ChatGPT/GPT-4/GPT-4o output into natural writing; removes ChatGPT's signature patterns.
-- [Humanize Claude text](https://simplyhumanize.com/humanize-claude-text): Rewrite Anthropic Claude output (Claude 3, 3.5 Sonnet) into natural, expert-sounding writing.
-- [Humanize Gemini text](https://simplyhumanize.com/humanize-gemini-text): Rewrite Google Gemini output (1.5, 2.0) into natural prose, removing the structured AI sound.
+- [Humanize ChatGPT text](https://simplyhumanize.com/humanize-chatgpt-text): Rewrite ChatGPT output (GPT-5.5 and other GPT-5 models, older GPT-4o text, custom GPTs) into natural writing; removes ChatGPT's signature patterns.
+- [Humanize Claude text](https://simplyhumanize.com/humanize-claude-text): Rewrite Anthropic Claude output (Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1 and older Claude models) into natural, expert-sounding writing.
+- [Humanize Gemini text](https://simplyhumanize.com/humanize-gemini-text): Rewrite Google Gemini output (Gemini 3 Pro, 3.1 Pro, 3.x Flash and older models) into natural prose, removing the structured AI sound.
 
 ## Languages
 - [Humanizador de Texto IA (Spanish)](https://simplyhumanize.com/es): Spanish landing page with the free humanizer embedded; explains the AI-writing tells typical of Spanish text.
