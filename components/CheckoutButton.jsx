@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { PRO_PRICE_DISPLAY, PASS_DAYS, PRO_PLAN_ID } from "@/lib/pricing";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PRO_PRICE_DISPLAY, PASS_DAYS, PRO_PLAN_ID, buyPath } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
 
 /**
@@ -20,7 +20,14 @@ import { track } from "@/lib/analytics";
  *   onSuccess?: (info: { proUntil: string | null }) => void,
  *   className?: string,
  *   label?: string,
+ *   autoStart?: boolean,
+ *   source?: string,
  * }} props
+ *
+ * `autoStart` opens checkout once on mount, for arrivals that already said they
+ * want to buy (see buyPath()). The button stays rendered underneath, so closing
+ * the widget, or a browser that blocks the automatic open, still leaves a way
+ * to pay. `source` is the upgrade prompt that led here, for analytics.
  */
 
 const SCRIPT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
@@ -50,16 +57,18 @@ function loadRazorpay() {
   });
 }
 
-export default function CheckoutButton({ onSuccess, className, label }) {
+export default function CheckoutButton({ onSuccess, className, label, autoStart = false, source }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
+  // Survives React's development double-mount, so auto-start fires once.
+  const autoStarted = useRef(false);
 
   const start = useCallback(async () => {
     setError(null);
     setNotice(null);
     setBusy(true);
-    track("checkout_start");
+    track("checkout_start", { source: source ?? "account", auto: autoStart });
 
     try {
       const ready = await loadRazorpay();
@@ -74,7 +83,9 @@ export default function CheckoutButton({ onSuccess, className, label }) {
 
       if (!orderResponse.ok || !order.success) {
         if (orderResponse.status === 401) {
-          window.location.href = "/login?next=/account";
+          // Session gone (expired, or signed out in another tab). Come back
+          // straight to checkout after signing in.
+          window.location.href = `/login?next=${encodeURIComponent(buyPath(source ?? "account"))}`;
           return;
         }
         setError(order?.error ?? "Could not start checkout. Please try again.");
@@ -127,6 +138,7 @@ export default function CheckoutButton({ onSuccess, className, label }) {
             value: order.amount / 100,
             currency: order.currency,
             plan: PRO_PLAN_ID,
+            source: source ?? "account",
           });
           try {
             const verifyResponse = await fetch("/api/checkout/verify", {
@@ -179,7 +191,13 @@ export default function CheckoutButton({ onSuccess, className, label }) {
       setError("Something went wrong starting checkout. Please try again.");
       setBusy(false);
     }
-  }, [onSuccess]);
+  }, [onSuccess, source, autoStart]);
+
+  useEffect(() => {
+    if (!autoStart || autoStarted.current) return;
+    autoStarted.current = true;
+    start();
+  }, [autoStart, start]);
 
   return (
     <div>
