@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { proPlan, PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { proPlan, PRO_PRICE_DISPLAY, PASS_DAYS, CHECKOUT_READY, upgradeHref } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
+import { useAuth } from "@/components/useAuth";
+import CheckoutButton from "@/components/CheckoutButton";
 
 /**
  * The upgrade dialog shown the moment someone runs out of free runs.
@@ -18,21 +20,40 @@ import { track } from "@/lib/analytics";
  *   onClose: () => void;
  *   quota?: { limit?: number, resetAt?: string } | null;
  *   message?: string | null;
+ *   onUpgraded?: () => void;
+ *   onLeave?: () => void;
  * }} props
+ *
+ * The CTA depends on who is looking:
+ *   - signed in → Razorpay opens right here, and `onUpgraded` lets the tool
+ *     unlock in place, with the user's text still in the box;
+ *   - signed out → straight to signup, then checkout opens on arrival. `onLeave`
+ *     runs first so the caller can keep the text for when they come back.
  */
-export default function UpgradeModal({ open, onClose, quota, message }) {
-  const closeRef = useRef(null);
+export default function UpgradeModal({ open, ...props }) {
+  // Only mount the dialog when it is open, so its auth lookup runs when someone
+  // actually hits the limit — not on every page view of every tool page.
+  if (!open) return null;
+  return <UpgradeDialog {...props} />;
+}
 
-  // Keyed on `open` alone: callers pass an inline onClose, so the effect below
-  // re-runs on every parent render and would report one view many times.
+function UpgradeDialog({ onClose, quota, message, onUpgraded, onLeave }) {
+  const closeRef = useRef(null);
+  const { user, loading } = useAuth();
+  const payHere = CHECKOUT_READY && !loading && Boolean(user);
+
+  // Mounted only while open, so this reports one view per opening.
   useEffect(() => {
-    if (open) track("upgrade_modal_view");
-  }, [open]);
+    track("upgrade_modal_view");
+    // Move focus into the dialog so keyboard and screen-reader users land here.
+    // Once, on open: the effect below re-runs on every parent render (callers
+    // pass an inline onClose), and re-focusing there could pull focus out of
+    // the Razorpay window mid-payment.
+    closeRef.current?.focus();
+  }, []);
 
   // Escape to dismiss, and hold the background still while the dialog is up.
   useEffect(() => {
-    if (!open) return;
-
     function onKeyDown(e) {
       if (e.key === "Escape") onClose();
     }
@@ -41,17 +62,14 @@ export default function UpgradeModal({ open, onClose, quota, message }) {
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
 
-    // Move focus into the dialog so keyboard and screen-reader users land here.
-    closeRef.current?.focus();
-
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open, onClose]);
+  }, [onClose]);
 
   // Portals need a document, which does not exist during the server render.
-  if (!open || typeof document === "undefined") return null;
+  if (typeof document === "undefined") return null;
 
   const resets = quota?.resetAt ? new Date(quota.resetAt) : null;
 
@@ -135,16 +153,33 @@ export default function UpgradeModal({ open, onClose, quota, message }) {
             ))}
           </ul>
 
-          <Link
-            href={proPlan.ctaHref}
-            onClick={() => track("upgrade_click", { source: "modal" })}
-            className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm"
-          >
-            {proPlan.cta} →
-          </Link>
+          {payHere ? (
+            <div className="mt-6">
+              <CheckoutButton
+                source="modal"
+                label={`${proPlan.cta} →`}
+                onSuccess={() => onUpgraded?.()}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              />
+            </div>
+          ) : (
+            <Link
+              // While auth is still loading this link is also right for a
+              // signed-in user: signup forwards them straight to checkout.
+              href={CHECKOUT_READY ? upgradeHref("modal") : proPlan.ctaHref}
+              onClick={() => {
+                track("upgrade_click", { source: "modal" });
+                onLeave?.();
+              }}
+              className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm"
+            >
+              {proPlan.cta} →
+            </Link>
+          )}
 
           <Link
             href="/pricing"
+            onClick={() => onLeave?.()}
             className="mt-2.5 w-full inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
           >
             Compare plans

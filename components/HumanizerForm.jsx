@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { countWords } from "@/lib/wordCount";
-import { FREE_MAX_WORDS, MIN_LENGTH } from "@/lib/freeTier";
+import { FREE_MAX_WORDS, MIN_LENGTH, MAX_CHARACTERS, LONG_DOCUMENT_WORDS } from "@/lib/freeTier";
 import { useQuota } from "@/components/useQuota";
 import UpgradeModal from "@/components/UpgradeModal";
 import { track, wordBucket } from "@/lib/analytics";
+import { saveDraft, takeDraft } from "@/lib/upgradeDraft";
 
 /**
  * Deliberately AI-sounding sample passages so users can try the tool without
@@ -24,7 +25,7 @@ const SAMPLE_TEXTS = [
 /**
  * @param {{
  *   onResult: (result: { humanizedText: string; metadata: import('../lib/types.js').Stage1Metadata }) => void;
- *   onLoadingChange: (loading: boolean) => void;
+ *   onLoadingChange: (loading: boolean, words?: number) => void;
  *   isLoading: boolean;
  * }} props
  */
@@ -32,10 +33,12 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [upgrade, setUpgrade] = useState(null);
+  const [upgraded, setUpgraded] = useState(false);
   const sampleIndexRef = useRef(0);
-  const { quota, apply } = useQuota("humanize");
+  const { quota, apply, refresh: refreshQuota } = useQuota("humanize");
 
-  // One-time hand-off from the AI detector ("Humanize it" CTA): pre-fill the box.
+  // One-time hand-offs that pre-fill the box: the AI detector's "Humanize it"
+  // CTA, and the text saved before leaving to sign up and pay for Pro.
   useEffect(() => {
     try {
       const prefill = sessionStorage.getItem("humanize_prefill");
@@ -43,14 +46,37 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         setText(prefill);
         sessionStorage.removeItem("humanize_prefill");
         track("humanize_prefilled", { source: "detector" });
+        return;
       }
     } catch {}
+
+    const draft = takeDraft();
+    if (draft) {
+      setText(draft);
+      track("humanize_prefilled", { source: "upgrade" });
+    }
   }, []);
+
+  // Paid inside the upgrade dialog: close it and lift the free limits in place.
+  // The text never left the box, so the next click just runs.
+  async function handleUpgraded() {
+    setUpgrade(null);
+    setUpgraded(true);
+    await refreshQuota();
+  }
 
   const charCount = text.length;
   // Same function the API uses, so the number on screen is the number enforced.
   const wordCount = countWords(text);
-  const isOverLimit = wordCount > FREE_MAX_WORDS;
+  // The free word cap does not apply to Pro; the server enforces the same rule
+  // (api/humanize). Until the quota loads, treat the user as free.
+  const isPro = quota?.pro === true;
+  const isOverWordLimit = !isPro && wordCount > FREE_MAX_WORDS;
+  // The character ceiling applies to everyone, Pro included, and the server
+  // checks the trimmed text.
+  const isOverCharLimit = text.trim().length > MAX_CHARACTERS;
+  const isOverLimit = isOverWordLimit || isOverCharLimit;
+  const isLongDocument = wordCount > LONG_DOCUMENT_WORDS && !isOverLimit;
   const isTooShort = charCount > 0 && charCount < MIN_LENGTH;
   const isExhausted = quota?.metered === true && quota.remaining <= 0;
   // Deliberately NOT gated on isExhausted: the button has to stay clickable so
@@ -83,7 +109,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
     }
 
     setError("");
-    onLoadingChange(true);
+    onLoadingChange(true, wordCount);
 
     const words = wordBucket(wordCount);
     const startedAt = Date.now();
@@ -198,6 +224,12 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
           </div>
         )}
 
+        {upgraded && !error && (
+          <p className="rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-xs text-emerald-700 dark:text-emerald-300">
+            You are Pro — no daily cap, no word limit. Click Humanize Content to continue.
+          </p>
+        )}
+
         {/* Counters + button row */}
         <div className="flex items-center justify-between gap-4">
           {/* Counters */}
@@ -205,7 +237,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
             <span>
               <span
                 className={
-                  isOverLimit
+                  isOverWordLimit
                     ? "text-rose-500 font-semibold"
                     : isTooShort
                     ? "text-amber-500"
@@ -214,13 +246,17 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
               >
                 {wordCount.toLocaleString()}
               </span>
-              <span className="text-slate-300 dark:text-slate-600">
-                /{FREE_MAX_WORDS.toLocaleString()}
-              </span>{" "}
+              {!isPro && (
+                <span className="text-slate-300 dark:text-slate-600">
+                  /{FREE_MAX_WORDS.toLocaleString()}
+                </span>
+              )}{" "}
               words
             </span>
             <span className="text-slate-300 dark:text-slate-600">·</span>
-            <span>{charCount.toLocaleString()} chars</span>
+            <span className={isOverCharLimit ? "text-rose-500 font-semibold" : undefined}>
+              {charCount.toLocaleString()} chars
+            </span>
           </div>
 
           {/* Submit button */}
@@ -254,6 +290,20 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
             Please enter at least {MIN_LENGTH} characters.
           </p>
         )}
+
+        {isOverCharLimit && !error && (
+          <p className="text-xs text-rose-600 dark:text-rose-400">
+            A single run can take up to {MAX_CHARACTERS.toLocaleString()} characters. Split the
+            document into parts and humanize each one.
+          </p>
+        )}
+
+        {isLongDocument && !isLoading && !error && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Long document: it is processed in sections and can take a few minutes. Keep this
+            tab open until it finishes.
+          </p>
+        )}
       </div>
 
       <UpgradeModal
@@ -261,6 +311,8 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         onClose={() => setUpgrade(null)}
         quota={upgrade?.quota ?? quota}
         message={upgrade?.message}
+        onUpgraded={handleUpgraded}
+        onLeave={() => saveDraft(text)}
       />
     </div>
   );

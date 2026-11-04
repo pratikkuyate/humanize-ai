@@ -8,10 +8,11 @@ import { track } from "@/lib/analytics";
  * @param {{
  *   humanizedText: string | null;
  *   isLoading: boolean;
+ *   loadingWords?: number;
  *   onClear: () => void;
  * }} props
  */
-export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
+export default function HumanizedOutput({ humanizedText, isLoading, loadingWords = 0, onClear }) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -102,7 +103,7 @@ export default function HumanizedOutput({ humanizedText, isLoading, onClear }) {
       {/* Body */}
       <div className="flex-1 relative overflow-auto">
         {isLoading ? (
-          <LoadingState />
+          <LoadingState words={loadingWords} />
         ) : humanizedText ? (
           <div className="p-5">
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">

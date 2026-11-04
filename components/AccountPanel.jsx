@@ -4,8 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/useAuth";
 import CheckoutButton from "@/components/CheckoutButton";
-import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { PRO_PRICE_DISPLAY, PASS_DAYS, PRO_PLAN_ID } from "@/lib/pricing";
 import { FREE_ATTEMPTS } from "@/lib/freeTier";
+import { draftReturnPath } from "@/lib/upgradeDraft";
 
 /**
  * The signed-in account view: current plan, and the way to buy or extend Pro.
@@ -32,13 +33,33 @@ function daysLeft(iso) {
 export default function AccountPanel({ checkoutReady }) {
   const { user, loading, refresh, signOut } = useAuth();
   const [justUpgraded, setJustUpgraded] = useState(false);
+  /** @type {[null | { source: string }, Function]} */
+  const [buyIntent, setBuyIntent] = useState(null);
+  const [returnPath, setReturnPath] = useState(null);
 
   // Send anyone signed out to the login page. Done client-side because this
   // panel is what knows the auth state; the page around it stays static.
+  // The full URL is kept so a `?buy=` arrival still lands on checkout.
   useEffect(() => {
     if (!loading && !user) {
-      window.location.href = "/login?next=/account";
+      const here = window.location.pathname + window.location.search;
+      window.location.href = `/login?next=${encodeURIComponent(here)}`;
     }
+  }, [loading, user]);
+
+  // `?buy=` means the user already chose to pay on an upgrade prompt (see
+  // buyPath()). Read it once, then drop it from the address bar so a refresh
+  // after paying does not open checkout again. Read in an effect rather than
+  // during render: this page is statically rendered and has no query string
+  // on the server.
+  useEffect(() => {
+    if (loading || !user) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("buy") === PRO_PLAN_ID) {
+      setBuyIntent({ source: params.get("src") || "account" });
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+    setReturnPath(draftReturnPath());
   }, [loading, user]);
 
   const onPurchased = useCallback(async () => {
@@ -63,6 +84,9 @@ export default function AccountPanel({ checkoutReady }) {
   const isPro = Boolean(user.pro);
   const expiry = formatDate(user.proUntil);
   const remaining = daysLeft(user.proUntil);
+  // Never open checkout unprompted for someone who already has Pro: a second
+  // pass is a deliberate choice, made with the button below.
+  const autoStart = Boolean(buyIntent) && !isPro && checkoutReady && !justUpgraded;
 
   return (
     <div className="space-y-8">
@@ -84,8 +108,21 @@ export default function AccountPanel({ checkoutReady }) {
       </div>
 
       {justUpgraded && (
-        <p className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300">
-          You are Pro. The humanizer is unlocked — no daily cap, no word limit.
+        <div className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p>You are Pro. The humanizer is unlocked — no daily cap, no word limit.</p>
+          <Link
+            href={returnPath ? `${returnPath}#tool` : "/#tool"}
+            className="shrink-0 inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition"
+          >
+            {returnPath ? "Back to your text →" : "Start humanizing →"}
+          </Link>
+        </div>
+      )}
+
+      {buyIntent && isPro && !justUpgraded && (
+        <p className="rounded-xl border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/40 px-4 py-3 text-sm text-violet-800 dark:text-violet-300">
+          You already have Pro until {expiry}, so checkout was not opened. You can still add
+          another {PASS_DAYS} days below.
         </p>
       )}
 
@@ -130,6 +167,8 @@ export default function AccountPanel({ checkoutReady }) {
           {checkoutReady ? (
             <CheckoutButton
               onSuccess={onPurchased}
+              autoStart={autoStart}
+              source={buyIntent?.source}
               label={
                 isPro
                   ? `Add another ${PASS_DAYS} days — ${PRO_PRICE_DISPLAY}`
