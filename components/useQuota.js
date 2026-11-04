@@ -20,23 +20,38 @@ export function useQuota(tool) {
   /** @type {[null | { remaining: number, limit: number, resetAt?: string, metered: boolean }, Function]} */
   const [quota, setQuota] = useState(null);
 
+  /** Fetch the current quota. Returns it, or null when it could not be read. */
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/quota?tool=${tool}`);
+      const data = await res.json();
+      return data?.success ? data : null;
+    } catch {
+      // Quota display is non-essential; leaving it null just hides the badge.
+      return null;
+    }
+  }, [tool]);
+
   useEffect(() => {
     let cancelled = false;
 
-    (async () => {
-      try {
-        const res = await fetch(`/api/quota?tool=${tool}`);
-        const data = await res.json();
-        if (!cancelled && data?.success) setQuota(data);
-      } catch {
-        // Quota display is non-essential; leaving it null just hides the badge.
-      }
-    })();
+    load().then((data) => {
+      if (!cancelled && data) setQuota(data);
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [tool]);
+  }, [load]);
+
+  /**
+   * Re-read the quota, e.g. straight after an in-place Pro purchase so the
+   * free limits lift without a page reload.
+   */
+  const refresh = useCallback(async () => {
+    const data = await load();
+    if (data) setQuota(data);
+  }, [load]);
 
   /** Spend an attempt. Returns true when the caller may proceed. */
   const consume = useCallback(async () => {
@@ -60,5 +75,5 @@ export function useQuota(tool) {
     if (next) setQuota(next);
   }, []);
 
-  return { quota, consume, apply };
+  return { quota, consume, apply, refresh };
 }

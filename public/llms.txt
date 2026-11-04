@@ -7,7 +7,7 @@
 > No sign-up or credit card required to try it.
 
 Key facts:
-- Free plan: 3 humanizer runs a day, up to 7,000 words per run, no account and
+- Free plan: 3 humanizer runs a day, up to 1,000 words per run, no account and
   no card. The AI Content Detector, Claude Watermark Remover, Em Dash Remover and
   Invisible Character Remover run in the browser and are free with no usage limit. Pro: $9 for 30 days of unlimited humanizer runs
   with no daily cap and no word limit. Pro is a one-time payment, not a

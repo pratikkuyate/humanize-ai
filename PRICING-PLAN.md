@@ -23,7 +23,7 @@
 
 ## Open questions
 
-1. ~~Free word cap per request?~~ **Answered: 7,000 words.** Shipped in
+1. ~~Free word cap per request?~~ **Answered: 7,000 words, lowered to 1,000 on 2026-11-04** (see [CONVERSION-PLAN.md](CONVERSION-PLAN.md)). Shipped in
    [lib/freeTier.js](lib/freeTier.js).
 2. ~~3 attempts?~~ **Answered: 3, without logging in.** Shipped.
 3. **3 attempts per what window?** Still unanswered. Implemented as a **rolling 24 hours**

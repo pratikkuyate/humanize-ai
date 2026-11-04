@@ -18,7 +18,6 @@ import CheckoutButton from "@/components/CheckoutButton";
  * @param {{
  *   open: boolean;
  *   onClose: () => void;
- *   quota?: { limit?: number, resetAt?: string } | null;
  *   message?: string | null;
  *   onUpgraded?: () => void;
  *   onLeave?: () => void;
@@ -37,7 +36,7 @@ export default function UpgradeModal({ open, ...props }) {
   return <UpgradeDialog {...props} />;
 }
 
-function UpgradeDialog({ onClose, quota, message, onUpgraded, onLeave }) {
+function UpgradeDialog({ onClose, message, onUpgraded, onLeave }) {
   const closeRef = useRef(null);
   const { user, loading } = useAuth();
   const payHere = CHECKOUT_READY && !loading && Boolean(user);
@@ -70,8 +69,6 @@ function UpgradeDialog({ onClose, quota, message, onUpgraded, onLeave }) {
 
   // Portals need a document, which does not exist during the server render.
   if (typeof document === "undefined") return null;
-
-  const resets = quota?.resetAt ? new Date(quota.resetAt) : null;
 
   return createPortal(
     <div
@@ -184,19 +181,6 @@ function UpgradeDialog({ onClose, quota, message, onUpgraded, onLeave }) {
           >
             Compare plans
           </Link>
-
-          {resets && (
-            <p className="mt-4 text-center text-[11px] text-slate-400 dark:text-slate-500">
-              Or wait — your free runs come back{" "}
-              <time dateTime={resets.toISOString()}>
-                {resets.toLocaleString(undefined, {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </time>
-              .
-            </p>
-          )}
         </div>
       </div>
     </div>,

@@ -90,7 +90,7 @@ export async function POST(request) {
         {
           success: false,
           error: "quota_exceeded",
-          message: `You've used all ${quota.limit} free runs. Get ${PASS_DAYS} days of unlimited access for ${PRO_PRICE_DISPLAY}, or wait for them to reset.`,
+          message: `You've used all ${quota.limit} free runs. Get ${PASS_DAYS} days of unlimited access for ${PRO_PRICE_DISPLAY}.`,
           remaining: 0,
           limit: quota.limit,
           resetAt: quota.resetAt,

@@ -71,7 +71,9 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   // The free word cap does not apply to Pro; the server enforces the same rule
   // (api/humanize). Until the quota loads, treat the user as free.
   const isPro = quota?.pro === true;
-  const isOverWordLimit = !isPro && wordCount > FREE_MAX_WORDS;
+  // Waits for the quota so a Pro user is never shown the free cap while it
+  // loads; a click in that gap goes to the server, which applies the same rule.
+  const isOverWordLimit = quota != null && !isPro && wordCount > FREE_MAX_WORDS;
   // The character ceiling applies to everyone, Pro included, and the server
   // checks the trimmed text.
   const isOverCharLimit = text.trim().length > MAX_CHARACTERS;
@@ -79,9 +81,10 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   const isLongDocument = wordCount > LONG_DOCUMENT_WORDS && !isOverLimit;
   const isTooShort = charCount > 0 && charCount < MIN_LENGTH;
   const isExhausted = quota?.metered === true && quota.remaining <= 0;
-  // Deliberately NOT gated on isExhausted: the button has to stay clickable so
-  // running out opens the upgrade dialog instead of leaving a dead grey button.
-  const canSubmit = charCount >= MIN_LENGTH && !isOverLimit && !isLoading;
+  // Deliberately NOT gated on isExhausted or isOverWordLimit: the button has to
+  // stay clickable so either limit opens the upgrade dialog instead of leaving a
+  // dead grey button. Only the character ceiling, which Pro shares, disables it.
+  const canSubmit = charCount >= MIN_LENGTH && !isOverCharLimit && !isLoading;
 
   /** @param {React.ChangeEvent<HTMLTextAreaElement>} e */
   function handleChange(e) {
@@ -104,7 +107,14 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
     // Out of runs — prompt instead of spending a request we know will 429.
     if (isExhausted) {
       track("quota_hit", { tool: "humanize" });
-      setUpgrade({ quota, message: null });
+      setUpgrade({ message: null });
+      return;
+    }
+
+    // Over the free word cap — same idea: no request, straight to the dialog.
+    if (isOverWordLimit) {
+      track("word_limit_hit", { tool: "humanize", words: wordBucket(wordCount) });
+      setUpgrade({ message: wordLimitMessage(wordCount) });
       return;
     }
 
@@ -128,7 +138,15 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         const next = { remaining: 0, limit: data.limit, resetAt: data.resetAt, metered: true };
         apply(next);
         track("quota_hit", { tool: "humanize" });
-        setUpgrade({ quota: next, message: data.message ?? null });
+        setUpgrade({ message: data.message ?? null });
+        return;
+      }
+
+      // The server's word-cap rejection, reached when the click came before the
+      // quota had loaded. Nothing was spent, so it gets the dialog, not an error.
+      if (response.status === 400 && data.upgrade) {
+        track("word_limit_hit", { tool: "humanize", words });
+        setUpgrade({ message: wordLimitMessage(data.wordCount ?? wordCount) });
         return;
       }
 
@@ -210,7 +228,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
             placeholder:text-slate-300 dark:placeholder:text-slate-600
             focus:outline-none transition-colors
             disabled:opacity-60 disabled:cursor-not-allowed
-            ${isOverLimit ? "text-rose-600 dark:text-rose-400" : ""}`}
+            ${isOverCharLimit ? "text-rose-600 dark:text-rose-400" : ""}`}
         />
       </div>
 
@@ -291,6 +309,13 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
           </p>
         )}
 
+        {isOverWordLimit && !isOverCharLimit && !error && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            The free plan takes up to {FREE_MAX_WORDS.toLocaleString()} words per run. Pro
+            humanizes the whole document in one go.
+          </p>
+        )}
+
         {isOverCharLimit && !error && (
           <p className="text-xs text-rose-600 dark:text-rose-400">
             A single run can take up to {MAX_CHARACTERS.toLocaleString()} characters. Split the
@@ -309,13 +334,17 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       <UpgradeModal
         open={Boolean(upgrade)}
         onClose={() => setUpgrade(null)}
-        quota={upgrade?.quota ?? quota}
         message={upgrade?.message}
         onUpgraded={handleUpgraded}
         onLeave={() => saveDraft(text)}
       />
     </div>
   );
+}
+
+/** @param {number} words */
+function wordLimitMessage(words) {
+  return `This text is ${words.toLocaleString()} words. The free plan takes up to ${FREE_MAX_WORDS.toLocaleString()} per run — Pro has no word limit.`;
 }
 
 function SparkleIcon() {
