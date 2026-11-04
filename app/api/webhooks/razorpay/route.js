@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { DB_READY } from "@/lib/db";
 import { verifyWebhookSignature, WEBHOOK_CONFIGURED } from "@/lib/razorpay";
-import { markPaid, markFailed, markRefunded } from "@/lib/payments";
-import { grantPass, revokeForPayment } from "@/lib/entitlement";
+import { markFailed, markRefunded } from "@/lib/payments";
+import { fulfilOrder, revokeForPayment } from "@/lib/entitlement";
 
 /**
  * POST /api/webhooks/razorpay — the authoritative fulfilment path.
@@ -21,7 +21,7 @@ import { grantPass, revokeForPayment } from "@/lib/entitlement";
  *      this event" would earn an endless redelivery loop.
  *
  * Configure in the Razorpay dashboard (Settings → Webhooks) with the events
- * payment.captured, payment.failed, and refund.processed, pointing at
+ * payment.captured, order.paid, payment.failed, and refund.processed, pointing at
  * https://<your-domain>/api/webhooks/razorpay
  */
 
@@ -69,30 +69,33 @@ export async function POST(request) {
 
   try {
     switch (type) {
-      case "payment.captured": {
-        const orderId = entity?.order_id;
+      // order.paid fires alongside payment.captured once an order is settled.
+      // Handling both means fulfilment survives either one being missed or not
+      // subscribed; fulfilOrder makes the second arrival a no-op.
+      case "payment.captured":
+      case "order.paid": {
+        const orderId = entity?.order_id ?? event?.payload?.order?.entity?.id;
         const paymentId = entity?.id;
         if (!orderId || !paymentId) return ack("missing order or payment id");
 
-        const transitioned = await markPaid({ orderId, paymentId });
+        // Works whether the order is `created` or `failed` (a retry on the same
+        // order after a failed attempt), and re-attempts the grant if an earlier
+        // delivery marked the order paid but crashed before inserting it.
+        const result = await fulfilOrder({ orderId, paymentId });
 
-        if (!transitioned) {
-          // Already fulfilled — either by the browser redirect or by an earlier
-          // delivery of this same event. Nothing to do.
-          return ack("already fulfilled");
+        if (result.outcome === "granted") {
+          console.log("pro granted via webhook for order", orderId);
+        } else if (result.outcome !== "already_granted") {
+          // Unknown order or refunded — retrying will not change the answer.
+          console.warn("webhook capture not fulfilled:", result.outcome, { orderId });
         }
 
-        await grantPass({
-          userId: transitioned.user_id,
-          paymentId: transitioned.id,
-          planId: transitioned.plan_id,
-        });
-
-        console.log("pro granted via webhook for order", orderId);
-        return ack("granted");
+        return ack(result.outcome);
       }
 
       case "payment.failed": {
+        // Recorded for reporting only. It is not terminal: the user can retry in
+        // the same checkout and a later capture will still be fulfilled.
         const orderId = entity?.order_id;
         if (orderId) await markFailed(orderId);
         return ack("marked failed");
