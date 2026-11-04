@@ -13,6 +13,14 @@ export default function HumanizerTool() {
   const [metadata, setMetadata] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  // Word count of the run in flight, so the loading screen can warn about long documents.
+  const [loadingWords, setLoadingWords] = useState(0);
+
+  /** @param {boolean} loading @param {number} [words] */
+  function handleLoadingChange(loading, words = 0) {
+    setIsLoading(loading);
+    if (loading) setLoadingWords(words);
+  }
 
   /** @param {{ humanizedText: string; metadata: import('../lib/types.js').Stage1Metadata }} result */
   function handleResult(result) {
@@ -32,7 +40,7 @@ export default function HumanizerTool() {
         <div className="flex flex-col gap-6">
           <HumanizerForm
             onResult={handleResult}
-            onLoadingChange={setIsLoading}
+            onLoadingChange={handleLoadingChange}
             isLoading={isLoading}
           />
           <StatsPanel metadata={metadata} />
@@ -43,6 +51,7 @@ export default function HumanizerTool() {
           <HumanizedOutput
             humanizedText={humanizedText}
             isLoading={isLoading}
+            loadingWords={loadingWords}
             onClear={handleClear}
           />
         </div>
