@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { DB_READY } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { verifyPaymentSignature, fetchPayment } from "@/lib/razorpay";
-import { findByOrderId, markPaid } from "@/lib/payments";
-import { grantPass } from "@/lib/entitlement";
+import { findByOrderId } from "@/lib/payments";
+import { fulfilOrder, proUntil } from "@/lib/entitlement";
 import { PASS_DAYS } from "@/lib/pricing";
 
 /**
@@ -70,28 +70,32 @@ export async function POST(request) {
   }
 
   try {
-    const transitioned = await markPaid({ orderId, paymentId });
+    // Handles the failed-then-retried case (order row is `failed` when the
+    // retry succeeds) and the webhook-got-here-first case, and never reports
+    // success unless an entitlement actually exists for this payment.
+    const result = await fulfilOrder({ orderId, paymentId });
 
-    if (!transitioned) {
-      // The webhook got here first, which is a success, not a conflict.
-      return NextResponse.json(
-        {
-          success: true,
-          alreadyProcessed: true,
-          proUntil: session.proUntil?.toISOString() ?? null,
-        },
-        { headers: NO_STORE }
-      );
+    if (result.outcome === "refunded") {
+      return fail("This payment was refunded, so Pro is not active.", 409);
     }
 
-    const { expiresAt } = await grantPass({
-      userId: payment.user_id,
-      paymentId: payment.id,
-      planId: payment.plan_id,
-    });
+    if (result.outcome !== "granted" && result.outcome !== "already_granted") {
+      // Signature was valid, so money moved — but the row is in a state we did
+      // not expect. Let the catch path ask Razorpay and answer accordingly.
+      throw new Error(`unexpected fulfilment outcome: ${result.outcome}`);
+    }
+
+    // Read the live expiry rather than the pre-payment session or this one
+    // payment's window, so stacked passes report their real end date.
+    const until = (await proUntil(session.userId)) ?? result.expiresAt;
 
     return NextResponse.json(
-      { success: true, proUntil: expiresAt.toISOString(), passDays: PASS_DAYS },
+      {
+        success: true,
+        alreadyProcessed: result.outcome === "already_granted",
+        proUntil: until.toISOString(),
+        passDays: PASS_DAYS,
+      },
       { headers: NO_STORE }
     );
   } catch (error) {
