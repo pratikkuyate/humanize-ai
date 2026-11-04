@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { countWords } from "@/lib/wordCount";
-import { FREE_MAX_WORDS, MIN_LENGTH } from "@/lib/freeTier";
+import { FREE_MAX_WORDS, MIN_LENGTH, MAX_CHARACTERS } from "@/lib/freeTier";
 import { useQuota } from "@/components/useQuota";
 import UpgradeModal from "@/components/UpgradeModal";
 import { track, wordBucket } from "@/lib/analytics";
@@ -50,7 +50,15 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   const charCount = text.length;
   // Same function the API uses, so the number on screen is the number enforced.
   const wordCount = countWords(text);
-  const isOverLimit = wordCount > FREE_MAX_WORDS;
+  // The free word cap does not apply to Pro; the server enforces the same rule
+  // (api/humanize). Until the quota loads, treat the user as free.
+  const isPro = quota?.pro === true;
+  const isOverWordLimit = !isPro && wordCount > FREE_MAX_WORDS;
+  // The character ceiling applies to everyone, Pro included, and the server
+  // checks the trimmed text.
+  const isOverCharLimit = text.trim().length > MAX_CHARACTERS;
+  const isOverLimit = isOverWordLimit || isOverCharLimit;
+  const isLongPro = isPro && wordCount > FREE_MAX_WORDS && !isOverCharLimit;
   const isTooShort = charCount > 0 && charCount < MIN_LENGTH;
   const isExhausted = quota?.metered === true && quota.remaining <= 0;
   // Deliberately NOT gated on isExhausted: the button has to stay clickable so
@@ -205,7 +213,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
             <span>
               <span
                 className={
-                  isOverLimit
+                  isOverWordLimit
                     ? "text-rose-500 font-semibold"
                     : isTooShort
                     ? "text-amber-500"
@@ -214,13 +222,17 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
               >
                 {wordCount.toLocaleString()}
               </span>
-              <span className="text-slate-300 dark:text-slate-600">
-                /{FREE_MAX_WORDS.toLocaleString()}
-              </span>{" "}
+              {!isPro && (
+                <span className="text-slate-300 dark:text-slate-600">
+                  /{FREE_MAX_WORDS.toLocaleString()}
+                </span>
+              )}{" "}
               words
             </span>
             <span className="text-slate-300 dark:text-slate-600">·</span>
-            <span>{charCount.toLocaleString()} chars</span>
+            <span className={isOverCharLimit ? "text-rose-500 font-semibold" : undefined}>
+              {charCount.toLocaleString()} chars
+            </span>
           </div>
 
           {/* Submit button */}
@@ -252,6 +264,19 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         {isTooShort && !error && (
           <p className="text-xs text-amber-600 dark:text-amber-400">
             Please enter at least {MIN_LENGTH} characters.
+          </p>
+        )}
+
+        {isOverCharLimit && !error && (
+          <p className="text-xs text-rose-600 dark:text-rose-400">
+            A single run can take up to {MAX_CHARACTERS.toLocaleString()} characters. Split the
+            document into parts and humanize each one.
+          </p>
+        )}
+
+        {isLongPro && !isLoading && !error && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Long document: it is processed in sections and can take a couple of minutes.
           </p>
         )}
       </div>
