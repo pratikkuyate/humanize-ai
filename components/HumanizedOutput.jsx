@@ -1,18 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoadingState from "./LoadingState";
 import { track } from "@/lib/analytics";
+import { PRO_PRICE_DISPLAY } from "@/lib/pricing";
+
+/**
+ * What /api/humanize returns when only part of the text was humanized: a
+ * preview after the free runs ran out, or the first FREE_MAX_WORDS words of a
+ * longer document. `lockedText` is the user's own untouched remainder.
+ *
+ * @typedef {{
+ *   reason: "preview" | "limit";
+ *   humanizedWords: number;
+ *   totalWords: number;
+ *   lockedWords: number;
+ *   lockedText: string;
+ * }} PartialResult
+ */
 
 /**
  * @param {{
  *   humanizedText: string | null;
+ *   partial?: PartialResult | null;
  *   isLoading: boolean;
  *   loadingWords?: number;
  *   onClear: () => void;
+ *   onUnlock?: () => void;
  * }} props
  */
-export default function HumanizedOutput({ humanizedText, isLoading, loadingWords = 0, onClear }) {
+export default function HumanizedOutput({
+  humanizedText,
+  partial = null,
+  isLoading,
+  loadingWords = 0,
+  onClear,
+  onUnlock,
+}) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -44,8 +68,23 @@ export default function HumanizedOutput({ humanizedText, isLoading, loadingWords
     ? humanizedText.trim().split(/\s+/).filter(Boolean).length
     : 0;
 
+  const isLocked = Boolean(humanizedText && partial && partial.lockedWords > 0);
+
+  // On phones the cards stack, so the output sits below the fold. Bring it into
+  // view when a run starts and when its result lands; on desktop both cards are
+  // already on screen and the page must not jump.
+  const cardRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  useEffect(() => {
+    if (!isLoading && !humanizedText) return;
+    if (!window.matchMedia("(max-width: 1023px)").matches) return;
+    cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [isLoading, humanizedText]);
+
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden h-full">
+    <div
+      ref={cardRef}
+      className="flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden h-full max-h-[85svh] lg:max-h-none scroll-mt-20"
+    >
       {/* Card header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-2">
@@ -100,8 +139,8 @@ export default function HumanizedOutput({ humanizedText, isLoading, loadingWords
         </div>
       </div>
 
-      {/* Body */}
-      <div className="flex-1 relative overflow-auto">
+      {/* Body — scrolls inside the card, so the card itself never outgrows the screen */}
+      <div className="flex-1 min-h-0 relative overflow-auto">
         {isLoading ? (
           <LoadingState words={loadingWords} />
         ) : humanizedText ? (
@@ -109,9 +148,10 @@ export default function HumanizedOutput({ humanizedText, isLoading, loadingWords
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
               {humanizedText}
             </p>
+            {isLocked && <LockedRemainder partial={partial} />}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center px-8 gap-3">
+          <div className="flex flex-col items-center justify-center h-full min-h-[400px] lg:min-h-0 text-center px-8 gap-3">
             <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
               <SparkleIcon />
             </div>
@@ -126,6 +166,52 @@ export default function HumanizedOutput({ humanizedText, isLoading, loadingWords
           </div>
         )}
       </div>
+
+      {/* Pinned under the scrolling body, so it is visible however long the
+          humanized part is. */}
+      {isLocked && !isLoading && (
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-t border-violet-100 dark:border-violet-900 bg-violet-50/70 dark:bg-violet-950/30">
+          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+            {partial.humanizedWords.toLocaleString()} of {partial.totalWords.toLocaleString()}{" "}
+            words humanized.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              track("preview_unlock_click", { reason: partial.reason });
+              onUnlock?.();
+            }}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+          >
+            Unlock the rest for {PRO_PRICE_DISPLAY} →
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The part of the text that was not humanized, blurred, under the humanized
+ * part. The unlock prompt itself is pinned to the card's footer.
+ *
+ * The blur is presentation only and hides nothing secret: it is the user's own
+ * original text. The humanized version of it does not exist yet — the server
+ * only ever humanized the visible part — which is why Copy above takes just the
+ * humanized text.
+ *
+ * @param {{ partial: PartialResult }} props
+ */
+function LockedRemainder({ partial }) {
+  return (
+    <div className="relative mt-1">
+      <p
+        aria-hidden="true"
+        className="max-h-56 overflow-hidden text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap blur-[5px] select-none pointer-events-none"
+      >
+        {partial.lockedText}
+      </p>
+      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white dark:from-slate-900 to-transparent pointer-events-none" />
     </div>
   );
 }

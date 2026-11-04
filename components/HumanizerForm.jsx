@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { countWords } from "@/lib/wordCount";
-import { FREE_MAX_WORDS, MIN_LENGTH, MAX_CHARACTERS, LONG_DOCUMENT_WORDS } from "@/lib/freeTier";
+import {
+  FREE_MAX_WORDS,
+  PREVIEW_WORDS,
+  MIN_LENGTH,
+  MAX_CHARACTERS,
+  LONG_DOCUMENT_WORDS,
+} from "@/lib/freeTier";
 import { useQuota } from "@/components/useQuota";
 import UpgradeModal from "@/components/UpgradeModal";
 import { track, wordBucket } from "@/lib/analytics";
@@ -24,18 +30,32 @@ const SAMPLE_TEXTS = [
 
 /**
  * @param {{
- *   onResult: (result: { humanizedText: string; metadata: import('../lib/types.js').Stage1Metadata }) => void;
+ *   ref?: React.Ref<{ openUpgrade: () => void }>;
+ *   onResult: (result: {
+ *     humanizedText: string;
+ *     metadata: import('../lib/types.js').Stage1Metadata;
+ *     partial: import('./HumanizedOutput.jsx').PartialResult | null;
+ *   }) => void;
  *   onLoadingChange: (loading: boolean, words?: number) => void;
  *   isLoading: boolean;
  * }} props
+ *
+ * `ref.openUpgrade()` lets the output panel's unlock button open the same
+ * upgrade dialog this form owns, so checkout, the saved draft, and the re-run
+ * after payment all live in one place.
  */
-export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) {
+export default function HumanizerForm({ ref, onResult, onLoadingChange, isLoading }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [upgrade, setUpgrade] = useState(null);
   const [upgraded, setUpgraded] = useState(false);
   const sampleIndexRef = useRef(0);
+  // Set when the text came back from the upgrade detour, so it runs by itself
+  // once the quota confirms the purchase went through.
+  const runAfterUpgradeRef = useRef(false);
   const { quota, apply, refresh: refreshQuota } = useQuota("humanize");
+
+  useImperativeHandle(ref, () => ({ openUpgrade: () => setUpgrade({ message: null }) }), []);
 
   // One-time hand-offs that pre-fill the box: the AI detector's "Humanize it"
   // CTA, and the text saved before leaving to sign up and pay for Pro.
@@ -53,16 +73,30 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
     const draft = takeDraft();
     if (draft) {
       setText(draft);
+      runAfterUpgradeRef.current = true;
       track("humanize_prefilled", { source: "upgrade" });
     }
   }, []);
 
-  // Paid inside the upgrade dialog: close it and lift the free limits in place.
-  // The text never left the box, so the next click just runs.
+  // Back from signup and checkout with a live pass: run the full text without
+  // making them click again — unlocking is what they paid for. Without a pass
+  // (they came back without buying) the text just waits in the box.
+  useEffect(() => {
+    if (!runAfterUpgradeRef.current || !quota?.pro || !text) return;
+    runAfterUpgradeRef.current = false;
+    handleSubmit();
+    // handleSubmit is recreated every render; this only needs to fire once the
+    // quota and the restored text are both in.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quota, text]);
+
+  // Paid inside the upgrade dialog: close it, lift the free limits in place,
+  // and run the full text straight away. It never left the box.
   async function handleUpgraded() {
     setUpgrade(null);
     setUpgraded(true);
     await refreshQuota();
+    handleSubmit();
   }
 
   const charCount = text.length;
@@ -81,9 +115,10 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   const isLongDocument = wordCount > LONG_DOCUMENT_WORDS && !isOverLimit;
   const isTooShort = charCount > 0 && charCount < MIN_LENGTH;
   const isExhausted = quota?.metered === true && quota.remaining <= 0;
-  // Deliberately NOT gated on isExhausted or isOverWordLimit: the button has to
-  // stay clickable so either limit opens the upgrade dialog instead of leaving a
-  // dead grey button. Only the character ceiling, which Pro shares, disables it.
+  // Deliberately NOT gated on isExhausted or isOverWordLimit: past either limit
+  // the server still returns a partial result (or the upgrade dialog once that
+  // is spent too), so the button stays clickable. Only the character ceiling,
+  // which Pro shares, disables it.
   const canSubmit = charCount >= MIN_LENGTH && !isOverCharLimit && !isLoading;
 
   /** @param {React.ChangeEvent<HTMLTextAreaElement>} e */
@@ -104,22 +139,17 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
   async function handleSubmit() {
     if (!canSubmit) return;
 
-    // Out of runs — prompt instead of spending a request we know will 429.
-    if (isExhausted) {
-      track("quota_hit", { tool: "humanize" });
-      setUpgrade({ message: null });
-      return;
-    }
-
-    // Over the free word cap — same idea: no request, straight to the dialog.
-    if (isOverWordLimit) {
-      track("word_limit_hit", { tool: "humanize", words: wordBucket(wordCount) });
-      setUpgrade({ message: wordLimitMessage(wordCount) });
-      return;
-    }
-
     setError("");
-    onLoadingChange(true, wordCount);
+    // What the server will actually humanize, so the loading screen does not
+    // warn about a long wait for a run that only covers part of the text.
+    onLoadingChange(
+      true,
+      isExhausted
+        ? Math.min(PREVIEW_WORDS, wordCount)
+        : isOverWordLimit
+        ? FREE_MAX_WORDS
+        : wordCount
+    );
 
     const words = wordBucket(wordCount);
     const startedAt = Date.now();
@@ -142,14 +172,6 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         return;
       }
 
-      // The server's word-cap rejection, reached when the click came before the
-      // quota had loaded. Nothing was spent, so it gets the dialog, not an error.
-      if (response.status === 400 && data.upgrade) {
-        track("word_limit_hit", { tool: "humanize", words });
-        setUpgrade({ message: wordLimitMessage(data.wordCount ?? wordCount) });
-        return;
-      }
-
       if (!data.success) {
         track("humanize_error", { status: response.status, words });
         setError(data.error ?? "An unexpected error occurred.");
@@ -165,7 +187,19 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
         pro: Boolean(data.quota?.pro),
         remaining: data.quota?.metered ? data.quota.remaining : undefined,
       });
-      onResult({ humanizedText: data.humanizedText, metadata: data.metadata });
+      if (data.partial) {
+        // A preview means the runs ran out, the same moment quota_hit has always
+        // marked; keeping it lets the funnel compare before and after.
+        track(data.partial.reason === "preview" ? "quota_hit" : "word_limit_hit", {
+          tool: "humanize",
+        });
+        track("preview_shown", { reason: data.partial.reason, words });
+      }
+      onResult({
+        humanizedText: data.humanizedText,
+        metadata: data.metadata,
+        partial: data.partial ?? null,
+      });
     } catch {
       track("humanize_error", { status: 0, words });
       setError("Network error. Please check your connection and try again.");
@@ -216,14 +250,14 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       </div>
 
       {/* Textarea */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-0">
         <textarea
           value={text}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           disabled={isLoading}
           placeholder="Paste your AI-generated content here..."
-          className={`w-full h-full min-h-[300px] sm:min-h-[500px] resize-none p-5 text-sm leading-relaxed
+          className={`w-full h-full min-h-[300px] sm:min-h-[500px] lg:min-h-0 resize-none p-5 text-sm leading-relaxed
             bg-transparent text-slate-700 dark:text-slate-300
             placeholder:text-slate-300 dark:placeholder:text-slate-600
             focus:outline-none transition-colors
@@ -244,7 +278,7 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
 
         {upgraded && !error && (
           <p className="rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-xs text-emerald-700 dark:text-emerald-300">
-            You are Pro — no daily cap, no word limit. Click Humanize Content to continue.
+            You are Pro — no daily cap, no word limit.
           </p>
         )}
 
@@ -309,13 +343,6 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
           </p>
         )}
 
-        {isOverWordLimit && !isOverCharLimit && !error && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            The free plan takes up to {FREE_MAX_WORDS.toLocaleString()} words per run. Pro
-            humanizes the whole document in one go.
-          </p>
-        )}
-
         {isOverCharLimit && !error && (
           <p className="text-xs text-rose-600 dark:text-rose-400">
             A single run can take up to {MAX_CHARACTERS.toLocaleString()} characters. Split the
@@ -340,11 +367,6 @@ export default function HumanizerForm({ onResult, onLoadingChange, isLoading }) 
       />
     </div>
   );
-}
-
-/** @param {number} words */
-function wordLimitMessage(words) {
-  return `This text is ${words.toLocaleString()} words. The free plan takes up to ${FREE_MAX_WORDS.toLocaleString()} per run — Pro has no word limit.`;
 }
 
 function SparkleIcon() {

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { humanizeText } from "@/lib/gemini";
-import { countWords } from "@/lib/wordCount";
-import { consumeQuota, refundQuota, applyQuota, publicQuota, proStatus } from "@/lib/quota";
-import { FREE_MAX_WORDS, MIN_LENGTH, MAX_CHARACTERS } from "@/lib/freeTier";
+import { countWords, takeWords } from "@/lib/wordCount";
+import { consumeQuota, refundQuota, applyQuota, publicQuota } from "@/lib/quota";
+import { FREE_MAX_WORDS, PREVIEW_WORDS, MIN_LENGTH, MAX_CHARACTERS } from "@/lib/freeTier";
 import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
 
 /**
@@ -60,49 +60,63 @@ export async function POST(request) {
     );
   }
 
-  // Pro is sold as "no word limit per run", so the free cap is resolved before
-  // validation rather than after. consumeQuota below checks Pro again; on a
-  // request that is about to spend several seconds in Gemini, one extra ~20ms
-  // lookup is not worth threading state through to avoid.
-  const { pro } = await proStatus(request);
-
   const wordCount = countWords(trimmed);
 
-  if (!pro && wordCount > FREE_MAX_WORDS) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: `Text must not exceed ${FREE_MAX_WORDS.toLocaleString()} words on the free plan. Yours is ${wordCount.toLocaleString()}.`,
-        wordCount,
-        maxWords: FREE_MAX_WORDS,
-        upgrade: true,
-      },
-      { status: 400 }
-    );
-  }
+  // Spend a run first; what the run covers depends on the result.
+  //
+  //   Pro                          → the whole text
+  //   free, run left, ≤ word cap   → the whole text
+  //   free, run left, > word cap   → the first FREE_MAX_WORDS words
+  //   free, no runs, preview left  → a PREVIEW_WORDS preview, spends the preview
+  //   free, no runs, no preview    → 429, and the client shows the upgrade dialog
+  //
+  // Anything not humanized comes back as `partial.lockedText`, the user's own
+  // words, which the client shows blurred behind an unlock prompt. Only the
+  // covered part is ever sent to Gemini, so there is no hidden full result in
+  // the response for anyone to dig out.
+  const runQuota = await consumeQuota(request, "humanize");
 
-  // Validation passed — now spend an attempt.
-  const quota = await consumeQuota(request, "humanize");
+  /** @type {"full" | "limit" | "preview"} */
+  let mode = "full";
+  let source = trimmed;
+  // The counter this request actually spent — refunded if the run then fails,
+  // and the one whose cookie the response carries.
+  let spent = { tool: "humanize", quota: runQuota };
 
-  if (!quota.allowed) {
-    return applyQuota(
-      NextResponse.json(
-        {
-          success: false,
-          error: "quota_exceeded",
-          message: `You've used all ${quota.limit} free runs. Get ${PASS_DAYS} days of unlimited access for ${PRO_PRICE_DISPLAY}.`,
-          remaining: 0,
-          limit: quota.limit,
-          resetAt: quota.resetAt,
-        },
-        { status: 429 }
-      ),
-      quota
-    );
+  if (!runQuota.allowed) {
+    const previewWords = Math.min(PREVIEW_WORDS, Math.floor(wordCount / 2));
+    const head = takeWords(trimmed, previewWords);
+    const previewQuota =
+      head.length >= MIN_LENGTH ? await consumeQuota(request, "preview") : null;
+
+    if (!previewQuota?.allowed) {
+      return applyQuota(
+        NextResponse.json(
+          {
+            success: false,
+            error: "quota_exceeded",
+            message: `You've used all ${runQuota.limit} free runs. Get ${PASS_DAYS} days of unlimited access for ${PRO_PRICE_DISPLAY}.`,
+            remaining: 0,
+            limit: runQuota.limit,
+            resetAt: runQuota.resetAt,
+          },
+          { status: 429 }
+        ),
+        previewQuota ?? runQuota
+      );
+    }
+
+    mode = "preview";
+    source = head;
+    spent = { tool: "preview", quota: previewQuota };
+  } else if (!runQuota.pro && wordCount > FREE_MAX_WORDS) {
+    mode = "limit";
+    source = takeWords(trimmed, FREE_MAX_WORDS);
   }
 
   try {
-    const { humanizedText, metadata } = await humanizeText(trimmed);
+    const { humanizedText, metadata } = await humanizeText(source);
+    const lockedText = trimmed.slice(source.length).trim();
 
     return applyQuota(
       NextResponse.json({
@@ -110,15 +124,27 @@ export async function POST(request) {
         originalText: trimmed,
         humanizedText,
         metadata,
-        quota: publicQuota(quota),
+        // The run counter, even for a preview, so the form keeps showing the
+        // runs as used up rather than the preview's own count.
+        quota: publicQuota(runQuota),
+        partial:
+          mode === "full"
+            ? null
+            : {
+                reason: mode,
+                humanizedWords: countWords(source),
+                totalWords: wordCount,
+                lockedWords: countWords(lockedText),
+                lockedText,
+              },
       }),
-      quota
+      spent.quota
     );
   } catch (err) {
     // The run failed on our side, so give the attempt back rather than charging
     // for a response the user never received. Under the cookie driver the refund
     // only takes effect once it is written onto the outgoing response.
-    const refunded = await refundQuota(request, "humanize");
+    const refunded = await refundQuota(request, spent.tool);
 
     const message = err instanceof Error ? err.message : String(err);
 

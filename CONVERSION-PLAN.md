@@ -119,6 +119,18 @@ These have the biggest effect:
 
 ## Phase 4 — Make the paywall moment work better
 
+> **Status (2026-11-04): partial result shipped.**
+> - Out of runs → one 150-word preview a day (`PREVIEW_WORDS`, `FREE_PREVIEWS`),
+>   the rest blurred behind "X of Y words humanized. Unlock the rest for $9".
+>   After that preview, the upgrade popup as before.
+> - Over 1,000 words with runs left → the first 1,000 words humanized (uses a
+>   run), the rest blurred behind the same unlock prompt.
+> - The server only ever humanizes the visible part; the blur is the user's own text.
+> - After payment the full text runs automatically, both in place and after
+>   the signup/checkout detour.
+> - New events: `preview_shown`, `preview_unlock_click`. `quota_hit` still fires
+>   when the runs run out, so the funnel stays comparable.
+
 - **Show part of the result:** humanize the first ~150 words, then blur the rest behind
   "Unlock full result — $X". People see quality before they pay.
 - **Show a before/after detector score:** "AI score 92% → 8%" makes the value obvious.
