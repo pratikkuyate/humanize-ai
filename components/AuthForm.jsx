@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { track } from "@/lib/analytics";
+import { useAuth } from "@/components/useAuth";
 
 /**
  * The sign-in and sign-up form. One component for both, because they differ only
@@ -61,6 +62,22 @@ export default function AuthForm({ mode, googleEnabled }) {
   const rawNext = searchParams.get("next") ?? "/account";
   const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/account";
 
+  // Arrived from an upgrade prompt: the next stop is checkout (see buyPath()).
+  const isBuying = next.startsWith("/account?") && next.includes("buy=");
+
+  // Someone already signed in has no reason to see this form on the way to
+  // checkout — the pricing page sends everyone here, signed in or not.
+  const { user } = useAuth();
+  useEffect(() => {
+    if (isBuying && user) window.location.replace(next);
+  }, [isBuying, user, next]);
+
+  // Keep `next` when switching between login and signup, or a returning user
+  // who clicks "Sign in" loses the checkout step.
+  const switchHref = `${isSignup ? "/login" : "/signup"}${
+    searchParams.get("next") ? `?next=${encodeURIComponent(next)}` : ""
+  }`;
+
   async function onSubmit(event) {
     event.preventDefault();
     setError(null);
@@ -97,12 +114,20 @@ export default function AuthForm({ mode, googleEnabled }) {
   return (
     <div className="w-full max-w-md">
       <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-        {isSignup ? "Create your account" : "Welcome back"}
+        {isBuying
+          ? isSignup
+            ? "Create your account to get Pro"
+            : "Sign in to get Pro"
+          : isSignup
+            ? "Create your account"
+            : "Welcome back"}
       </h1>
       <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-        {isSignup
-          ? "You only need an account to go Pro. The free tools work without one."
-          : "Sign in to manage your plan and unlock unlimited runs."}
+        {isBuying
+          ? "It takes a few seconds. Payment is the next step, and your Pro pass is tied to this account."
+          : isSignup
+            ? "You only need an account to go Pro. The free tools work without one."
+            : "Sign in to manage your plan and unlock unlimited runs."}
       </p>
 
       {googleEnabled && (
@@ -216,7 +241,7 @@ export default function AuthForm({ mode, googleEnabled }) {
       <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
         {isSignup ? "Already have an account? " : "No account yet? "}
         <Link
-          href={isSignup ? "/login" : "/signup"}
+          href={switchHref}
           className="font-medium text-violet-600 dark:text-violet-400 hover:underline"
         >
           {isSignup ? "Sign in" : "Create one"}
