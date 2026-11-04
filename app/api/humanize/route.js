@@ -9,6 +9,11 @@ import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
  * POST /api/humanize
  * Body: { text: string }
  */
+
+// Long Pro documents are split into chunks that each make three Gemini calls,
+// which can run well past the default function timeout. 300s is the ceiling on
+// Vercel Hobby with Fluid compute; raise it on a paid plan if needed.
+export const maxDuration = 300;
 export async function POST(request) {
   let body;
 
