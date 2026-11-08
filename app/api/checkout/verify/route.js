@@ -3,8 +3,7 @@ import { DB_READY } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { verifyPaymentSignature, fetchPayment } from "@/lib/razorpay";
 import { findByOrderId } from "@/lib/payments";
-import { fulfilOrder, proUntil } from "@/lib/entitlement";
-import { PASS_DAYS } from "@/lib/pricing";
+import { fulfilOrder, proUntil, passDaysFor } from "@/lib/entitlement";
 
 /**
  * POST /api/checkout/verify — confirm a payment the browser just completed and
@@ -94,7 +93,7 @@ export async function POST(request) {
         success: true,
         alreadyProcessed: result.outcome === "already_granted",
         proUntil: until.toISOString(),
-        passDays: PASS_DAYS,
+        passDays: passDaysFor(payment.plan_id),
       },
       { headers: NO_STORE }
     );

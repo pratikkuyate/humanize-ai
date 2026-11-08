@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import { H2, H3, P, UL } from "@/components/ProseHelpers";
 import { ExternalLink, renderInline, plainText } from "@/components/InlineText";
 import { languageAlternates } from "@/lib/languages";
-import { PRO_PRICE_USD, PASS_DAYS } from "@/lib/pricing";
+import { PASS_LIST } from "@/lib/pricing";
 
 const HumanizerTool = dynamic(() => import("@/components/HumanizerTool"), {
   loading: () => (
@@ -66,7 +66,7 @@ const faqs = [
   {
     question: "Is using an AI humanizer free?",
     answer:
-      "Yes — you can humanize text for free with a generous word limit per request, no credit card and no account required. The free tier is built so you can test the tool on real content and judge the quality yourself. For people who humanize content daily, Pro removes the daily run cap and the per-run word limit for 30 days, as a one-time payment with nothing that auto-renews. For occasional use, the free version covers most needs comfortably.",
+      "Yes — you can humanize text for free with a generous word limit per request, no credit card and no account required. The free tier is built so you can test the tool on real content and judge the quality yourself. For people who humanize content daily, Pro removes the daily run cap and the per-run word limit for 7 or 30 days, as a one-time payment with nothing that auto-renews. For occasional use, the free version covers most needs comfortably.",
   },
   {
     question: "Will humanizing change the meaning of my content?",
@@ -180,13 +180,13 @@ const softwareJsonLd = {
       price: "0",
       priceCurrency: "USD",
     },
-    {
+    ...PASS_LIST.map((pass) => ({
       "@type": "Offer",
-      name: `Pro — ${PASS_DAYS}-day pass`,
-      price: String(PRO_PRICE_USD),
+      name: `Pro — ${pass.days}-day pass`,
+      price: String(pass.priceUsd),
       priceCurrency: "USD",
       url: `${siteUrl}/pricing`,
-    },
+    })),
   ],
   featureList: [
     "Natural language rewriting",

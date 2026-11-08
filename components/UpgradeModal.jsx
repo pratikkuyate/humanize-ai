@@ -1,12 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { proPlan, PRO_PRICE_DISPLAY, PASS_DAYS, CHECKOUT_READY, upgradeHref } from "@/lib/pricing";
+import {
+  proPlan,
+  CHECKOUT_READY,
+  upgradeHref,
+  getPass,
+  passPriceLabel,
+  PASS_FEATURES,
+  WEEK_PLAN_ID,
+} from "@/lib/pricing";
 import { track } from "@/lib/analytics";
 import { useAuth } from "@/components/useAuth";
 import CheckoutButton from "@/components/CheckoutButton";
+import PassPicker from "@/components/PassPicker";
+
+/**
+ * The pass selected when the dialog opens. The week pass, because this dialog
+ * appears at the moment someone needs one text finished, and the cheapest
+ * option there is the one most likely to become a first purchase. The 30-day
+ * pass sits next to it tagged "Best value".
+ */
+const DEFAULT_PICK = WEEK_PLAN_ID;
 
 /**
  * The upgrade dialog shown the moment someone runs out of free runs.
@@ -40,6 +57,9 @@ function UpgradeDialog({ onClose, message, onUpgraded, onLeave }) {
   const closeRef = useRef(null);
   const { user, loading } = useAuth();
   const payHere = CHECKOUT_READY && !loading && Boolean(user);
+  const [planId, setPlanId] = useState(DEFAULT_PICK);
+  const pass = getPass(planId);
+  const ctaLabel = CHECKOUT_READY ? `Unlock Pro — ${passPriceLabel(pass)}` : proPlan.cta;
 
   // Mounted only while open, so this reports one view per opening.
   useEffect(() => {
@@ -118,17 +138,17 @@ function UpgradeDialog({ onClose, message, onUpgraded, onLeave }) {
         </div>
 
         <div className="px-6 py-6">
-          <div className="flex items-baseline justify-center gap-1.5">
-            <span className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {PRO_PRICE_DISPLAY}
-            </span>
-            <span className="text-sm text-slate-500 dark:text-slate-400">
-              for {PASS_DAYS} days
-            </span>
-          </div>
+          <PassPicker
+            value={planId}
+            onChange={(id) => {
+              setPlanId(id);
+              track("pass_select", { plan: id, source: "modal" });
+            }}
+            name="upgrade-pass"
+          />
 
           <ul className="mt-5 space-y-2.5">
-            {proPlan?.features.map((feature) => (
+            {PASS_FEATURES.map((feature) => (
               <li
                 key={feature}
                 className="flex gap-2.5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
@@ -153,8 +173,12 @@ function UpgradeDialog({ onClose, message, onUpgraded, onLeave }) {
           {payHere ? (
             <div className="mt-6">
               <CheckoutButton
+                // Keyed by plan so switching passes gives a fresh button rather
+                // than one still holding the other pass's error or notice.
+                key={pass.id}
+                planId={pass.id}
                 source="modal"
-                label={`${proPlan.cta} →`}
+                label={`${ctaLabel} →`}
                 onSuccess={() => onUpgraded?.()}
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
               />
@@ -163,14 +187,14 @@ function UpgradeDialog({ onClose, message, onUpgraded, onLeave }) {
             <Link
               // While auth is still loading this link is also right for a
               // signed-in user: signup forwards them straight to checkout.
-              href={CHECKOUT_READY ? upgradeHref("modal") : proPlan.ctaHref}
+              href={CHECKOUT_READY ? upgradeHref("modal", pass.id) : proPlan.ctaHref}
               onClick={() => {
-                track("upgrade_click", { source: "modal" });
+                track("upgrade_click", { source: "modal", plan: pass.id });
                 onLeave?.();
               }}
               className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm"
             >
-              {proPlan.cta} →
+              {ctaLabel} →
             </Link>
           )}
 

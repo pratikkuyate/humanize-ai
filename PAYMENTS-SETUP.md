@@ -174,10 +174,29 @@ clears.
 
 #### Switching to INR instead, if approval stalls
 
-Three constants in [lib/pricing.js](lib/pricing.js) — `CURRENCY`,
-`PRO_PRICE_USD`, `PRO_PRICE_DISPLAY` — plus the price wording on the pricing
-page, upgrade modal, and `llms.txt`. Everything downstream, including the Offer
-schema and the Razorpay order amount, reads from those.
+`CURRENCY` and the `PASSES` table in [lib/pricing.js](lib/pricing.js) (each
+pass's `priceUsd` and the `$` in `priceDisplay`), plus the price wording in
+`llms.txt` and the hand-written `"USD"` in the home page schema
+([app/page.jsx](app/page.jsx)). Everything else, including the Offer schema,
+the upgrade modal and the Razorpay order amount, reads from `PASSES`.
+
+### 4.1a Passes on sale
+
+| Plan id | Price | Length |
+|---|---|---|
+| `pro-7` | $4 | 7 days |
+| `pro-30` | $9 | 30 days |
+
+Defined once in `PASSES` ([lib/pricing.js](lib/pricing.js)). Nothing in the
+Razorpay dashboard needs to match: there are no Razorpay "Plans" or "Items" to
+create, because checkout uses the Orders API and the server sets each order's
+amount from `PASSES`. The browser only sends a plan id.
+
+The plan id is saved in `payments.plan_id` and in the order's Razorpay `notes`,
+and `grantPass()` reads the pass length from it. So the webhook grants 7 or 30
+days correctly even when the browser never returns. **Never rename or reuse a
+plan id that has been sold**, because old payments are looked up by it. To
+change a price, edit `priceUsd`. To change a length, add a new id.
 
 ### 4.2 API keys
 

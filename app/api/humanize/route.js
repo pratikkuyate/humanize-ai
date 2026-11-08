@@ -3,7 +3,7 @@ import { humanizeText } from "@/lib/gemini";
 import { countWords, takeWords } from "@/lib/wordCount";
 import { consumeQuota, refundQuota, applyQuota, publicQuota } from "@/lib/quota";
 import { FREE_MAX_WORDS, PREVIEW_WORDS, MIN_LENGTH, MAX_CHARACTERS } from "@/lib/freeTier";
-import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { CHEAPEST_PASS } from "@/lib/pricing";
 
 /**
  * POST /api/humanize
@@ -95,7 +95,7 @@ export async function POST(request) {
           {
             success: false,
             error: "quota_exceeded",
-            message: `You've used all ${runQuota.limit} free runs. Get ${PASS_DAYS} days of unlimited access for ${PRO_PRICE_DISPLAY}.`,
+            message: `You've used all ${runQuota.limit} free runs. Get unlimited access from ${CHEAPEST_PASS.priceDisplay} for ${CHEAPEST_PASS.days} days.`,
             remaining: 0,
             limit: runQuota.limit,
             resetAt: runQuota.resetAt,

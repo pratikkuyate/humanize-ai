@@ -3,23 +3,21 @@ import { DB_READY } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { createOrder, RAZORPAY_READY } from "@/lib/razorpay";
 import { recordOrder } from "@/lib/payments";
-import {
-  PRO_PLAN_ID,
-  PRO_PRICE_MINOR,
-  CURRENCY,
-  RAZORPAY_KEY_ID,
-  PASS_DAYS,
-} from "@/lib/pricing";
+import { PRO_PLAN_ID, CURRENCY, RAZORPAY_KEY_ID, getPass } from "@/lib/pricing";
 
 /**
  * POST /api/checkout/order — open a Razorpay order for the signed-in user.
  *
+ * Body (optional): { planId: "pro-7" | "pro-30" }. Defaults to the 30-day pass.
+ *
  * No money moves here. This reserves an amount with Razorpay and returns the
  * order id that the checkout widget in the browser needs.
  *
- * Note what the request body does NOT contain: an amount. The price comes from
- * the server's own constants, because a client-supplied amount is a client-
- * supplied price.
+ * Note what the request body does NOT contain: an amount. The browser names a
+ * plan, and the price is looked up from the server's own PASSES table, because
+ * a client-supplied amount is a client-supplied price. An unknown plan id is
+ * rejected rather than quietly defaulted, so a typo can never sell the wrong
+ * pass.
  */
 
 export const dynamic = "force-dynamic";
@@ -41,13 +39,19 @@ export async function POST(request) {
   // granted to. Buying while signed out would leave nothing to attach it to.
   if (!session) return fail("Sign in to continue to checkout.", 401);
 
+  // An empty or missing body is the 30-day pass, which keeps any older client
+  // that posts nothing working.
+  const body = await request.json().catch(() => null);
+  const pass = getPass(body?.planId ?? PRO_PLAN_ID);
+  if (!pass) return fail("Unknown plan.", 400);
+
   // Buying again while still Pro is allowed and not a mistake: grantPass()
   // extends from the current expiry rather than overwriting it, so an early
   // renewal loses no days.
 
   try {
     const order = await createOrder({
-      amountMinor: PRO_PRICE_MINOR,
+      amountMinor: pass.amountMinor,
       currency: CURRENCY,
       // Razorpay caps receipts at 40 chars, so use a short unique-enough stamp
       // rather than the user id and a timestamp.
@@ -55,27 +59,27 @@ export async function POST(request) {
       notes: {
         user_id: session.userId,
         email: session.email,
-        plan_id: PRO_PLAN_ID,
+        plan_id: pass.id,
       },
     });
 
     await recordOrder({
       userId: session.userId,
       orderId: order.id,
-      amount: PRO_PRICE_MINOR,
+      amount: pass.amountMinor,
       currency: CURRENCY,
-      planId: PRO_PLAN_ID,
+      planId: pass.id,
     });
 
     return NextResponse.json(
       {
         success: true,
         orderId: order.id,
-        amount: PRO_PRICE_MINOR,
+        amount: pass.amountMinor,
         currency: CURRENCY,
         keyId: RAZORPAY_KEY_ID,
-        planId: PRO_PLAN_ID,
-        passDays: PASS_DAYS,
+        planId: pass.id,
+        passDays: pass.days,
         email: session.email,
         name: session.name,
       },

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import LoadingState from "./LoadingState";
 import { track } from "@/lib/analytics";
-import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { CHEAPEST_PASS } from "@/lib/pricing";
 
 /**
  * What /api/humanize returns when only part of the text was humanized: a
@@ -177,8 +177,8 @@ export default function HumanizedOutput({
               words humanized.
             </p>
             <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
-              Pro finishes this text, and gives you unlimited runs with no word limit for{" "}
-              {PASS_DAYS} days.
+              Pro finishes this text, and gives you unlimited runs with no word limit — from{" "}
+              {CHEAPEST_PASS.priceDisplay} for {CHEAPEST_PASS.days} days.
             </p>
           </div>
           <button
@@ -189,7 +189,7 @@ export default function HumanizedOutput({
             }}
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
           >
-            Get Pro: {PRO_PRICE_DISPLAY} for {PASS_DAYS} days →
+            Unlock the rest — from {CHEAPEST_PASS.priceDisplay} →
           </button>
         </div>
       )}

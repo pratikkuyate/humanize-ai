@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/useAuth";
 import CheckoutButton from "@/components/CheckoutButton";
-import { PRO_PRICE_DISPLAY, PASS_DAYS, PRO_PLAN_ID } from "@/lib/pricing";
+import PassPicker from "@/components/PassPicker";
+import { PRO_PLAN_ID, WEEK_PLAN_ID, CHEAPEST_PASS, getPass } from "@/lib/pricing";
 import { FREE_ATTEMPTS } from "@/lib/freeTier";
 import { draftReturnPath } from "@/lib/upgradeDraft";
 
@@ -33,8 +34,10 @@ function daysLeft(iso) {
 export default function AccountPanel({ checkoutReady }) {
   const { user, loading, refresh, signOut } = useAuth();
   const [justUpgraded, setJustUpgraded] = useState(false);
-  /** @type {[null | { source: string }, Function]} */
+  /** @type {[null | { source: string, planId: string }, Function]} */
   const [buyIntent, setBuyIntent] = useState(null);
+  /** The pass chosen on this page; null until the user picks one. */
+  const [picked, setPicked] = useState(null);
   const [returnPath, setReturnPath] = useState(null);
 
   // Send anyone signed out to the login page. Done client-side because this
@@ -55,8 +58,9 @@ export default function AccountPanel({ checkoutReady }) {
   useEffect(() => {
     if (loading || !user) return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get("buy") === PRO_PLAN_ID) {
-      setBuyIntent({ source: params.get("src") || "account" });
+    const intended = getPass(params.get("buy"));
+    if (intended) {
+      setBuyIntent({ source: params.get("src") || "account", planId: intended.id });
       window.history.replaceState(null, "", window.location.pathname);
     }
     setReturnPath(draftReturnPath());
@@ -87,6 +91,10 @@ export default function AccountPanel({ checkoutReady }) {
   // Never open checkout unprompted for someone who already has Pro: a second
   // pass is a deliberate choice, made with the button below.
   const autoStart = Boolean(buyIntent) && !isPro && checkoutReady && !justUpgraded;
+  // The pass the user chose on the upgrade prompt, else the week pass for a
+  // first purchase and the 30-day pass for someone already extending.
+  const pass =
+    getPass(picked ?? buyIntent?.planId) ?? getPass(isPro ? PRO_PLAN_ID : WEEK_PLAN_ID);
 
   return (
     <div className="space-y-8">
@@ -122,7 +130,7 @@ export default function AccountPanel({ checkoutReady }) {
       {buyIntent && isPro && !justUpgraded && (
         <p className="rounded-xl border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/40 px-4 py-3 text-sm text-violet-800 dark:text-violet-300">
           You already have Pro until {expiry}, so checkout was not opened. You can still add
-          another {PASS_DAYS} days below.
+          more days below.
         </p>
       )}
 
@@ -158,23 +166,34 @@ export default function AccountPanel({ checkoutReady }) {
           </>
         ) : (
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            {FREE_ATTEMPTS} humanizer runs a day. Go Pro for {PRO_PRICE_DISPLAY} to remove the
-            daily cap and the per-run word limit for {PASS_DAYS} days.
+            {FREE_ATTEMPTS} humanizer runs a day. Go Pro from {CHEAPEST_PASS.priceDisplay} to
+            remove the daily cap and the per-run word limit.
           </p>
         )}
 
         <div className="mt-5">
           {checkoutReady ? (
-            <CheckoutButton
-              onSuccess={onPurchased}
-              autoStart={autoStart}
-              source={buyIntent?.source}
-              label={
-                isPro
-                  ? `Add another ${PASS_DAYS} days — ${PRO_PRICE_DISPLAY}`
-                  : `Get Pro — ${PRO_PRICE_DISPLAY} for ${PASS_DAYS} days`
-              }
-            />
+            <div className="space-y-4">
+              <div className="max-w-sm">
+                <PassPicker value={pass.id} onChange={setPicked} name="account-pass" />
+              </div>
+              <CheckoutButton
+                // A fresh button per pass, so an error from one does not linger
+                // on the other. Auto-start applies only to the pass the upgrade
+                // prompt named, and only until the user picks one here —
+                // otherwise toggling back would remount it and reopen checkout.
+                key={pass.id}
+                planId={pass.id}
+                onSuccess={onPurchased}
+                autoStart={autoStart && picked === null && pass.id === buyIntent?.planId}
+                source={buyIntent?.source}
+                label={
+                  isPro
+                    ? `Add ${pass.days} days — ${pass.priceDisplay}`
+                    : `Get Pro — ${pass.priceDisplay} for ${pass.days} days`
+                }
+              />
+            </div>
           ) : (
             <p className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40 px-3.5 py-2.5 text-sm text-amber-800 dark:text-amber-300">
               Checkout is not switched on yet. See{" "}

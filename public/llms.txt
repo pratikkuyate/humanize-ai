@@ -9,9 +9,9 @@
 Key facts:
 - Free plan: 3 humanizer runs a day, up to 1,000 words per run, no account and
   no card. The AI Content Detector, Claude Watermark Remover, Em Dash Remover and
-  Invisible Character Remover run in the browser and are free with no usage limit. Pro: $9 for 30 days of unlimited humanizer runs
-  with no daily cap and no word limit. Pro is a one-time payment, not a
-  subscription — nothing auto-renews.
+  Invisible Character Remover run in the browser and are free with no usage limit. Pro: unlimited humanizer runs with no daily cap
+  and no word limit, sold as a $4 7-day pass or a $9 30-day pass. Each pass is
+  a one-time payment, not a subscription — nothing auto-renews.
 - An account is only needed for Pro. Every free tool works without signing up.
 - No style selector: the humanizer keeps the tone of the text you paste.
 - Side-by-side original vs. humanized output; re-run for fresh variations.
@@ -23,7 +23,7 @@ Key facts:
 ## Main pages
 - [Home / AI Humanizer tool](https://simplyhumanize.com/): Paste AI text and get natural, human-sounding writing in one click. Includes how-it-works, features, and FAQ.
 - [Use cases](https://simplyhumanize.com/use-cases): Overview of who uses the humanizer and how.
-- [Pricing](https://simplyhumanize.com/pricing): Free plan with 3 humanizer runs a day and no sign-up; Pro at $9 for a 30-day pass with unlimited runs, no daily cap and no word limit. One-time payment, nothing renews automatically.
+- [Pricing](https://simplyhumanize.com/pricing): Free plan with 3 humanizer runs a day and no sign-up; Pro at $4 for a 7-day pass or $9 for a 30-day pass, with unlimited runs, no daily cap and no word limit. One-time payment, nothing renews automatically.
 - [About](https://simplyhumanize.com/about): What the tool does and how it works.
 - [Contact](https://simplyhumanize.com/contact): Get in touch.
 

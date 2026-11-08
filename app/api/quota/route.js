@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { peekQuota, consumeQuota, applyQuota, publicQuota } from "@/lib/quota";
 import { METERED_TOOLS } from "@/lib/freeTier";
-import { PRO_PRICE_DISPLAY, PASS_DAYS } from "@/lib/pricing";
+import { CHEAPEST_PASS } from "@/lib/pricing";
 
 /**
  * Quota endpoint. The humanizer reads its remaining runs here (it spends them
@@ -77,7 +77,7 @@ export async function POST(request) {
           ? {}
           : {
               error: "quota_exceeded",
-              message: `You've used all ${quota.limit} free runs. Get ${PASS_DAYS} days of unlimited access for ${PRO_PRICE_DISPLAY}.`,
+              message: `You've used all ${quota.limit} free runs. Get unlimited access from ${CHEAPEST_PASS.priceDisplay} for ${CHEAPEST_PASS.days} days.`,
             }),
       },
       { status: quota.allowed ? 200 : 429, headers: NO_STORE }

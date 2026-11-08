@@ -110,6 +110,19 @@ These have the biggest effect:
 
 ## Phase 3 — Fix packaging and price (weeks 2–4)
 
+> **Status (2026-11-08): 7-day pass shipped.**
+> - New `pro-7` pass, **$4 for 7 days**, next to the $9 / 30-day pass
+>   (`PASSES` in [lib/pricing.js](lib/pricing.js)). Same features, different length.
+> - The upgrade modal and account page now have a 7/30-day picker
+>   ([components/PassPicker.jsx](components/PassPicker.jsx)). The modal opens with
+>   the week pass selected, and the 30-day card is tagged "Best value · $0.30 a day".
+> - Pricing page shows three columns: Free / Week pass / Pro.
+> - Copy that quoted "$9 for 30 days" as the only option now says "from $4".
+> - Events: `checkout_start`, `upgrade_click` and `purchase` now carry `plan`;
+>   new `pass_select` event fires when someone switches pass in the modal.
+>   In GA4, register `plan` as a custom dimension to split purchases by pass.
+> - INR pricing and the 90-day pass are not done yet.
+
 - **Add a cheap first purchase:** a 7-day pass at about $3–4. Students buy around
   deadlines, not by the month.
 - **Use local pricing:** INR for Indian visitors (for example ₹149 a week and ₹399 a

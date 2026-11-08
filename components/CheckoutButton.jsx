@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRO_PRICE_DISPLAY, PASS_DAYS, PRO_PLAN_ID, buyPath } from "@/lib/pricing";
+import { PRO_PLAN_ID, buyPath, getPass, passPriceLabel } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
 
 /**
@@ -22,7 +22,11 @@ import { track } from "@/lib/analytics";
  *   label?: string,
  *   autoStart?: boolean,
  *   source?: string,
+ *   planId?: string,
  * }} props
+ *
+ * `planId` picks the pass (see PASSES in lib/pricing). Only the id is sent to
+ * the server; the server decides what it costs.
  *
  * `autoStart` opens checkout once on mount, for arrivals that already said they
  * want to buy (see buyPath()). The button stays rendered underneath, so closing
@@ -57,7 +61,15 @@ function loadRazorpay() {
   });
 }
 
-export default function CheckoutButton({ onSuccess, className, label, autoStart = false, source }) {
+export default function CheckoutButton({
+  onSuccess,
+  className,
+  label,
+  autoStart = false,
+  source,
+  planId = PRO_PLAN_ID,
+}) {
+  const pass = getPass(planId) ?? getPass(PRO_PLAN_ID);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
@@ -68,7 +80,7 @@ export default function CheckoutButton({ onSuccess, className, label, autoStart 
     setError(null);
     setNotice(null);
     setBusy(true);
-    track("checkout_start", { source: source ?? "account", auto: autoStart });
+    track("checkout_start", { source: source ?? "account", auto: autoStart, plan: pass.id });
 
     try {
       const ready = await loadRazorpay();
@@ -78,14 +90,18 @@ export default function CheckoutButton({ onSuccess, className, label, autoStart 
         return;
       }
 
-      const orderResponse = await fetch("/api/checkout/order", { method: "POST" });
+      const orderResponse = await fetch("/api/checkout/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId: pass.id }),
+      });
       const order = await orderResponse.json();
 
       if (!orderResponse.ok || !order.success) {
         if (orderResponse.status === 401) {
           // Session gone (expired, or signed out in another tab). Come back
           // straight to checkout after signing in.
-          window.location.href = `/login?next=${encodeURIComponent(buyPath(source ?? "account"))}`;
+          window.location.href = `/login?next=${encodeURIComponent(buyPath(source ?? "account", pass.id))}`;
           return;
         }
         setError(order?.error ?? "Could not start checkout. Please try again.");
@@ -137,7 +153,7 @@ export default function CheckoutButton({ onSuccess, className, label, autoStart 
             transaction_id: result.razorpay_payment_id,
             value: order.amount / 100,
             currency: order.currency,
-            plan: PRO_PLAN_ID,
+            plan: order.planId ?? pass.id,
             source: source ?? "account",
           });
           try {
@@ -191,7 +207,7 @@ export default function CheckoutButton({ onSuccess, className, label, autoStart 
       setError("Something went wrong starting checkout. Please try again.");
       setBusy(false);
     }
-  }, [onSuccess, source, autoStart]);
+  }, [onSuccess, source, autoStart, pass]);
 
   useEffect(() => {
     if (!autoStart || autoStarted.current) return;
@@ -210,7 +226,7 @@ export default function CheckoutButton({ onSuccess, className, label, autoStart 
           "w-full rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed transition"
         }
       >
-        {busy ? "Opening checkout…" : (label ?? `Get Pro — ${PRO_PRICE_DISPLAY} for ${PASS_DAYS} days`)}
+        {busy ? "Opening checkout…" : (label ?? `Get Pro — ${passPriceLabel(pass)}`)}
       </button>
 
       {error && (
