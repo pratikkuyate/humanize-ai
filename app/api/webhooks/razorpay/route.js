@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { DB_READY } from "@/lib/db";
 import { verifyWebhookSignature, WEBHOOK_CONFIGURED } from "@/lib/razorpay";
 import { markFailed, markRefunded } from "@/lib/payments";
 import { fulfilOrder, revokeForPayment } from "@/lib/entitlement";
+import { sendReceiptOnce } from "@/lib/receipts";
 
 /**
  * POST /api/webhooks/razorpay — the authoritative fulfilment path.
@@ -83,9 +84,15 @@ export async function POST(request) {
         // delivery marked the order paid but crashed before inserting it.
         const result = await fulfilOrder({ orderId, paymentId });
 
-        if (result.outcome === "granted") {
-          console.log("pro granted via webhook for order", orderId);
-        } else if (result.outcome !== "already_granted") {
+        if (result.outcome === "granted" || result.outcome === "already_granted") {
+          if (result.outcome === "granted") {
+            console.log("pro granted via webhook for order", orderId);
+          }
+          // Covers the buyer who closed the tab before the verify call, and
+          // retries a receipt that failed on the verify path. Only one is ever
+          // sent per payment (see lib/receipts.js).
+          after(() => sendReceiptOnce(result.paymentRowId));
+        } else {
           // Unknown order or refunded — retrying will not change the answer.
           console.warn("webhook capture not fulfilled:", result.outcome, { orderId });
         }

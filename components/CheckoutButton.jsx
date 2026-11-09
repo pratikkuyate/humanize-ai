@@ -83,8 +83,12 @@ export default function CheckoutButton({
     track("checkout_start", { source: source ?? "account", auto: autoStart, plan: pass.id });
 
     try {
+      // Every way out before the widget opens reports checkout_error with a
+      // reason. Without these, a click that never reached Razorpay looked
+      // identical to a buyer who simply walked away.
       const ready = await loadRazorpay();
       if (!ready) {
+        track("checkout_error", { reason: "script_blocked", plan: pass.id });
         setError("Could not load the payment window. Check your connection or any ad blocker.");
         setBusy(false);
         return;
@@ -99,11 +103,17 @@ export default function CheckoutButton({
 
       if (!orderResponse.ok || !order.success) {
         if (orderResponse.status === 401) {
+          track("checkout_error", { reason: "login_redirect", plan: pass.id });
           // Session gone (expired, or signed out in another tab). Come back
           // straight to checkout after signing in.
           window.location.href = `/login?next=${encodeURIComponent(buyPath(source ?? "account", pass.id))}`;
           return;
         }
+        track("checkout_error", {
+          reason: "order_failed",
+          status: orderResponse.status,
+          plan: pass.id,
+        });
         setError(order?.error ?? "Could not start checkout. Please try again.");
         setBusy(false);
         return;
@@ -182,9 +192,15 @@ export default function CheckoutButton({
             if (verifyResponse.status === 202 || verified.pending) {
               setNotice(verified.error);
             } else {
+              track("checkout_error", {
+                reason: "verify_failed",
+                status: verifyResponse.status,
+                plan: order.planId ?? pass.id,
+              });
               setError(verified?.error ?? "We could not confirm your payment.");
             }
           } catch {
+            track("checkout_error", { reason: "verify_unreachable", plan: order.planId ?? pass.id });
             setNotice(
               "Your payment went through but we could not confirm it here. Refresh this page in a moment, or contact us if Pro is still not active."
             );
@@ -202,8 +218,12 @@ export default function CheckoutButton({
       });
 
       razorpay.open();
+      // The payment form is on screen: the step between checkout_start and a
+      // purchase or dismissal that was invisible before.
+      track("checkout_opened", { plan: pass.id, currency: order.currency });
     } catch (err) {
       console.error("checkout failed:", err);
+      track("checkout_error", { reason: "exception", plan: pass.id });
       setError("Something went wrong starting checkout. Please try again.");
       setBusy(false);
     }

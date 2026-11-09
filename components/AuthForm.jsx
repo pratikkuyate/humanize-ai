@@ -192,12 +192,22 @@ export default function AuthForm({ mode, googleEnabled }) {
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
-          >
-            Password
-          </label>
+          <div className="flex items-baseline justify-between mb-1.5">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
+              Password
+            </label>
+            {!isSignup && (
+              <Link
+                href="/forgot-password"
+                className="text-xs font-medium text-violet-600 dark:text-violet-400 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            )}
+          </div>
           <input
             id="password"
             type="password"

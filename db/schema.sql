@@ -66,6 +66,23 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE INDEX IF NOT EXISTS sessions_user_idx    ON sessions (user_id);
 CREATE INDEX IF NOT EXISTS sessions_expires_idx ON sessions (expires_at);
 
+-- Password reset links. Like sessions, only the SHA-256 of the token is kept,
+-- so a leaked table cannot be turned into working reset links. A token is
+-- single-use (`used_at`) and short-lived (`expires_at`, see lib/passwordReset.js).
+-- Recent rows per user also drive the throttle that stops the "forgot password"
+-- form being used to flood someone's inbox.
+CREATE TABLE IF NOT EXISTS password_resets (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     uuid        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash  text        NOT NULL UNIQUE,
+  expires_at  timestamptz NOT NULL,
+  used_at     timestamptz,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS password_resets_user_idx
+  ON password_resets (user_id, created_at DESC);
+
 -- ─── Payments ────────────────────────────────────────────────────────────────
 
 -- One row per Razorpay order, created before the user is sent to checkout and
@@ -87,6 +104,12 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at           timestamptz NOT NULL DEFAULT now(),
   paid_at              timestamptz
 );
+
+-- When the receipt email went out. Set atomically before sending, so the
+-- browser verify path and the webhook — which both finish the same payment —
+-- cannot both send one. Cleared again if the send fails, so a later arrival
+-- can retry.
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS receipt_sent_at timestamptz;
 
 CREATE INDEX IF NOT EXISTS payments_user_idx   ON payments (user_id);
 CREATE INDEX IF NOT EXISTS payments_status_idx ON payments (status);

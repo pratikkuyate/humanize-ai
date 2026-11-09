@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { DB_READY } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { verifyPaymentSignature, fetchPayment } from "@/lib/razorpay";
 import { findByOrderId } from "@/lib/payments";
 import { fulfilOrder, proUntil, passDaysFor } from "@/lib/entitlement";
+import { sendReceiptOnce } from "@/lib/receipts";
 
 /**
  * POST /api/checkout/verify — confirm a payment the browser just completed and
@@ -83,6 +84,10 @@ export async function POST(request) {
       // not expect. Let the catch path ask Razorpay and answer accordingly.
       throw new Error(`unexpected fulfilment outcome: ${result.outcome}`);
     }
+
+    // After the response, so the email never delays the user's unlock. The
+    // webhook calls this too; sendReceiptOnce makes sure only one is sent.
+    after(() => sendReceiptOnce(result.paymentRowId));
 
     // Read the live expiry rather than the pre-payment session or this one
     // payment's window, so stacked passes report their real end date.

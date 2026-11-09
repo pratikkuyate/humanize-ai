@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
           Privacy Policy
         </h1>
         <p className="text-sm text-slate-400 dark:text-slate-500 mb-10">
-          Last updated: October 2026
+          Last updated: November 2026
         </p>
 
         <H2>Overview</H2>
@@ -81,7 +81,8 @@ export default function PrivacyPolicyPage() {
           Google we store your Google account identifier, your email address, and your name and
           profile picture as Google supplies them. We also record which sessions are signed in, so
           that you can be signed out, along with the browser identifier and a one-way hash of the IP
-          address each session was created from.
+          address each session was created from. If you ask for a password reset we keep a hashed,
+          single-use record of the link we emailed you, which expires after 30 minutes.
         </P>
 
         <H3>Payments</H3>
@@ -175,6 +176,20 @@ export default function PrivacyPolicyPage() {
                 className="text-violet-600 dark:text-violet-400 hover:underline"
               >
                 Razorpay's Privacy Policy
+              </a>
+              .
+            </>,
+            <>
+              <strong>Resend</strong> — sends account emails: password reset links and purchase
+              receipts. It receives your email address and the content of those emails, nothing
+              else. We do not send marketing email through it. See{" "}
+              <a
+                href="https://resend.com/legal/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-600 dark:text-violet-400 hover:underline"
+              >
+                Resend&rsquo;s Privacy Policy
               </a>
               .
             </>,

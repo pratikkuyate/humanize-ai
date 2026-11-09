@@ -282,6 +282,55 @@ Zero rows is the pass condition.
 
 ---
 
+## 5a. Email: password reset and receipts (Resend, 15 minutes)
+
+Two emails, both transactional:
+
+| Email | Sent when | Code |
+|---|---|---|
+| Password reset link | Someone submits `/forgot-password` | [lib/passwordReset.js](lib/passwordReset.js) |
+| Purchase receipt | A payment is fulfilled (verify call or webhook, whichever is first) | [lib/receipts.js](lib/receipts.js) |
+
+**Locally you need nothing.** With `RESEND_API_KEY` unset, each email is printed
+in the `npm run dev` terminal, reset link included, so you can click through
+the whole flow.
+
+To send for real:
+
+1. Sign up at resend.com → **Domains → Add domain** → `simplyhumanize.com`.
+   Add the DNS records it shows (SPF, DKIM, and the MX record for the
+   bounce subdomain) at your domain registrar. Wait until Resend says
+   **Verified**. Until then, sends from `@simplyhumanize.com` are rejected.
+2. **API Keys → Create** with "Sending access".
+3. Set in `.env.local` and in Vercel:
+   ```
+   RESEND_API_KEY=re_xxxx
+   EMAIL_FROM=Simply Humanize <noreply@simplyhumanize.com>
+   EMAIL_REPLY_TO=simplyhumanize@gmail.com
+   ```
+4. Run `npm run db:migrate`. It adds the `password_resets` table and
+   `payments.receipt_sent_at`.
+
+How the reset is protected:
+
+- The link expires after 30 minutes and works once. Only its SHA-256 is stored.
+- The token is in the URL fragment (`#token=`), so it never reaches server logs,
+  and the page strips it from the address bar.
+- The form gives the same answer whether or not the email has an account, and
+  the send happens after the response, so timing doesn't reveal it either.
+- At most 1 email a minute and 5 an hour per account.
+- A successful reset signs the account out everywhere, then signs this browser in.
+
+Receipts are sent at most once per payment: `receipt_sent_at` is claimed
+atomically before sending and released if the send fails. Check with:
+
+```sql
+SELECT razorpay_payment_id, plan_id, paid_at, receipt_sent_at
+FROM payments WHERE status = 'paid' ORDER BY paid_at DESC LIMIT 5;
+```
+
+---
+
 ## 6. Going live
 
 - [ ] Swap `rzp_test_*` keys for live keys, and add the live webhook.
@@ -289,6 +338,8 @@ Zero rows is the pass condition.
       `.env.local` is not deployed.
 - [ ] Publish the Google OAuth consent screen out of *Testing*.
 - [ ] Re-run `npm run db:migrate` against the production database.
+- [ ] Verify the sending domain in Resend and set `RESEND_API_KEY`, `EMAIL_FROM`,
+      `EMAIL_REPLY_TO` in Vercel (section 5a).
 - [ ] Make one real purchase with a real card, then refund it from the Razorpay
       dashboard and confirm access is withdrawn (the `refund.processed` webhook
       calls `revokeForPayment`).
