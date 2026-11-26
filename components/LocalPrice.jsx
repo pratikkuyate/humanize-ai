@@ -33,6 +33,11 @@ export function PassPrice({ passId }) {
   return usePassAmounts(passId).price;
 }
 
+/** The free plan's price: "$0" or "€0". */
+export function FreePrice() {
+  return formatMoney(0, useCurrency(), "en");
+}
+
 /** "Best value: about $0.30 a day" / "…about €0.33 a day" */
 export function PassPerDayFeature({ passId }) {
   return `Best value: about ${usePassAmounts(passId).perDay} a day`;
