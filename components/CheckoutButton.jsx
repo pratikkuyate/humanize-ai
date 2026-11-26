@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRO_PLAN_ID, buyPath, getPass, passPriceLabel } from "@/lib/pricing";
+import { PRO_PLAN_ID, buyPath, getPass } from "@/lib/pricing";
 import { track } from "@/lib/analytics";
+import { usePaywall } from "@/components/usePaywall";
 
 /**
  * Razorpay checkout, start to finish.
@@ -70,6 +71,9 @@ export default function CheckoutButton({
   planId = PRO_PLAN_ID,
 }) {
   const pass = getPass(planId) ?? getPass(PRO_PLAN_ID);
+  // Every message below is in the paywall language. The amount and currency
+  // Razorpay shows come from the order the server created, not from here.
+  const { t, price, lang } = usePaywall();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
@@ -89,7 +93,7 @@ export default function CheckoutButton({
       const ready = await loadRazorpay();
       if (!ready) {
         track("checkout_error", { reason: "script_blocked", plan: pass.id });
-        setError("Could not load the payment window. Check your connection or any ad blocker.");
+        setError(t.scriptBlocked);
         setBusy(false);
         return;
       }
@@ -114,7 +118,8 @@ export default function CheckoutButton({
           status: orderResponse.status,
           plan: pass.id,
         });
-        setError(order?.error ?? "Could not start checkout. Please try again.");
+        // The server's error text is English; the reason is in the event above.
+        setError(t.startFailed);
         setBusy(false);
         return;
       }
@@ -125,7 +130,7 @@ export default function CheckoutButton({
         currency: order.currency,
         order_id: order.orderId,
         name: "Simply Humanize",
-        description: `Pro — ${order.passDays} days of unlimited access`,
+        description: t.checkoutItem(order.passDays),
         prefill: {
           email: order.email ?? "",
           name: order.name ?? "",
@@ -151,7 +156,7 @@ export default function CheckoutButton({
           ondismiss: () => {
             track("checkout_dismissed");
             setBusy(false);
-            setNotice("Checkout closed — you have not been charged.");
+            setNotice(t.closedNotice);
           },
         },
 
@@ -190,20 +195,18 @@ export default function CheckoutButton({
             // telling a paying customer their payment failed is how refund
             // requests and chargebacks start.
             if (verifyResponse.status === 202 || verified.pending) {
-              setNotice(verified.error);
+              setNotice(t.verifyPending);
             } else {
               track("checkout_error", {
                 reason: "verify_failed",
                 status: verifyResponse.status,
                 plan: order.planId ?? pass.id,
               });
-              setError(verified?.error ?? "We could not confirm your payment.");
+              setError(t.verifyFailed);
             }
           } catch {
             track("checkout_error", { reason: "verify_unreachable", plan: order.planId ?? pass.id });
-            setNotice(
-              "Your payment went through but we could not confirm it here. Refresh this page in a moment, or contact us if Pro is still not active."
-            );
+            setNotice(t.verifyUnreachable);
           } finally {
             setBusy(false);
           }
@@ -214,7 +217,11 @@ export default function CheckoutButton({
       // to reset here — just surface why it failed.
       razorpay.on("payment.failed", (event) => {
         track("payment_failed", { reason: event?.error?.reason ?? "unknown" });
-        setError(event?.error?.description ?? "The payment did not go through.");
+        // Razorpay's own description ("Your card was declined…") is English
+        // and more specific, so English readers keep it; others get the
+        // translated line, and Razorpay's window shows the detail anyway.
+        const detail = lang === "en" ? event?.error?.description : null;
+        setError(detail ?? t.paymentFailed);
       });
 
       razorpay.open();
@@ -224,10 +231,10 @@ export default function CheckoutButton({
     } catch (err) {
       console.error("checkout failed:", err);
       track("checkout_error", { reason: "exception", plan: pass.id });
-      setError("Something went wrong starting checkout. Please try again.");
+      setError(t.genericError);
       setBusy(false);
     }
-  }, [onSuccess, source, autoStart, pass]);
+  }, [onSuccess, source, autoStart, pass, t, lang]);
 
   useEffect(() => {
     if (!autoStart || autoStarted.current) return;
@@ -246,7 +253,7 @@ export default function CheckoutButton({
           "w-full rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed transition"
         }
       >
-        {busy ? "Opening checkout…" : (label ?? `Get Pro — ${passPriceLabel(pass)}`)}
+        {busy ? t.opening : (label ?? t.getPro(price(pass), pass.days))}
       </button>
 
       {error && (
