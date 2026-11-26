@@ -11,6 +11,7 @@ import {
 } from "@/lib/freeTier";
 import { useQuota } from "@/components/useQuota";
 import UpgradeModal from "@/components/UpgradeModal";
+import { usePaywall } from "@/components/usePaywall";
 import { track, wordBucket } from "@/lib/analytics";
 import { saveDraft, takeDraft } from "@/lib/upgradeDraft";
 
@@ -54,8 +55,11 @@ export default function HumanizerForm({ ref, onResult, onLoadingChange, isLoadin
   // once the quota confirms the purchase went through.
   const runAfterUpgradeRef = useRef(false);
   const { quota, apply, refresh: refreshQuota } = useQuota("humanize");
+  // Also records the page's language (/fr, /pt…) for the tab, so the paywall
+  // stays in that language through the signup and account pages.
+  const { t } = usePaywall();
 
-  useImperativeHandle(ref, () => ({ openUpgrade: () => setUpgrade({ message: null }) }), []);
+  useImperativeHandle(ref, () => ({ openUpgrade: () => setUpgrade({ reason: null }) }), []);
 
   // One-time hand-offs that pre-fill the box: the AI detector's "Humanize it"
   // CTA, and the text saved before leaving to sign up and pay for Pro.
@@ -168,7 +172,9 @@ export default function HumanizerForm({ ref, onResult, onLoadingChange, isLoadin
         const next = { remaining: 0, limit: data.limit, resetAt: data.resetAt, metered: true };
         apply(next);
         track("quota_hit", { tool: "humanize" });
-        setUpgrade({ message: data.message ?? null });
+        // The dialog writes its own message in the visitor's language and
+        // currency; data.message is English and quotes USD.
+        setUpgrade({ reason: "quota" });
         return;
       }
 
@@ -278,7 +284,7 @@ export default function HumanizerForm({ ref, onResult, onLoadingChange, isLoadin
 
         {upgraded && !error && (
           <p className="rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-4 py-3 text-xs text-emerald-700 dark:text-emerald-300">
-            You are Pro — no daily cap, no word limit.
+            {t.proActive}
           </p>
         )}
 
@@ -361,7 +367,7 @@ export default function HumanizerForm({ ref, onResult, onLoadingChange, isLoadin
       <UpgradeModal
         open={Boolean(upgrade)}
         onClose={() => setUpgrade(null)}
-        message={upgrade?.message}
+        reason={upgrade?.reason}
         onUpgraded={handleUpgraded}
         onLeave={() => saveDraft(text)}
       />

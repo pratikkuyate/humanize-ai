@@ -3,7 +3,8 @@ import { DB_READY } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { createOrder, RAZORPAY_READY } from "@/lib/razorpay";
 import { recordOrder } from "@/lib/payments";
-import { PRO_PLAN_ID, CURRENCY, RAZORPAY_KEY_ID, getPass } from "@/lib/pricing";
+import { PRO_PLAN_ID, RAZORPAY_KEY_ID, getPass, passPrice } from "@/lib/pricing";
+import { currencyFromRequest } from "@/lib/geo";
 
 /**
  * POST /api/checkout/order — open a Razorpay order for the signed-in user.
@@ -18,6 +19,11 @@ import { PRO_PLAN_ID, CURRENCY, RAZORPAY_KEY_ID, getPass } from "@/lib/pricing";
  * a client-supplied amount is a client-supplied price. An unknown plan id is
  * rejected rather than quietly defaulted, so a typo can never sell the wrong
  * pass.
+ *
+ * Nor does it name a currency. Visitors in the euro area pay the pass's EUR
+ * price, everyone else the USD price, decided here from Vercel's country
+ * header (lib/geo.js) — the same rule proxy.js uses to pick the prices shown
+ * on screen, but read from the request, not from the cookie the browser holds.
  */
 
 export const dynamic = "force-dynamic";
@@ -49,10 +55,12 @@ export async function POST(request) {
   // extends from the current expiry rather than overwriting it, so an early
   // renewal loses no days.
 
+  const { currency, amountMinor } = passPrice(pass, currencyFromRequest(request));
+
   try {
     const order = await createOrder({
-      amountMinor: pass.amountMinor,
-      currency: CURRENCY,
+      amountMinor,
+      currency,
       // Razorpay caps receipts at 40 chars, so use a short unique-enough stamp
       // rather than the user id and a timestamp.
       receipt: `sh_${Date.now().toString(36)}`,
@@ -66,8 +74,8 @@ export async function POST(request) {
     await recordOrder({
       userId: session.userId,
       orderId: order.id,
-      amount: pass.amountMinor,
-      currency: CURRENCY,
+      amount: amountMinor,
+      currency,
       planId: pass.id,
     });
 
@@ -75,8 +83,8 @@ export async function POST(request) {
       {
         success: true,
         orderId: order.id,
-        amount: pass.amountMinor,
-        currency: CURRENCY,
+        amount: amountMinor,
+        currency,
         keyId: RAZORPAY_KEY_ID,
         planId: pass.id,
         passDays: pass.days,

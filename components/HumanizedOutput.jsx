@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import LoadingState from "./LoadingState";
 import { track } from "@/lib/analytics";
-import { CHEAPEST_PASS } from "@/lib/pricing";
+import { usePaywall } from "@/components/usePaywall";
 
 /**
  * What /api/humanize returns when only part of the text was humanized: a
@@ -38,6 +38,8 @@ export default function HumanizedOutput({
   onUnlock,
 }) {
   const [copied, setCopied] = useState(false);
+  // Language and currency for the unlock prompt under a partial result.
+  const { t, price, num, cheapest } = usePaywall();
 
   async function handleCopy() {
     if (!humanizedText) return;
@@ -173,12 +175,10 @@ export default function HumanizedOutput({
         <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-t border-violet-100 dark:border-violet-900 bg-violet-50/70 dark:bg-violet-950/30">
           <div>
             <p className="text-sm font-semibold text-slate-900 dark:text-white">
-              {partial.humanizedWords.toLocaleString()} of {partial.totalWords.toLocaleString()}{" "}
-              words humanized.
+              {t.previewSummary(num(partial.humanizedWords), num(partial.totalWords))}
             </p>
             <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
-              Pro finishes this text, and gives you unlimited runs with no word limit — from{" "}
-              {CHEAPEST_PASS.priceDisplay} for {CHEAPEST_PASS.days} days.
+              {t.previewPitch(price(cheapest), cheapest.days)}
             </p>
           </div>
           <button
@@ -189,7 +189,7 @@ export default function HumanizedOutput({
             }}
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
           >
-            Unlock the rest — from {CHEAPEST_PASS.priceDisplay} →
+            {t.previewButton(price(cheapest))}
           </button>
         </div>
       )}

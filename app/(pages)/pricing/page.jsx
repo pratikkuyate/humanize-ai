@@ -9,9 +9,14 @@ import {
   PASS_DAYS,
   PASSES,
   WEEK_PLAN_ID,
+  PRO_PLAN_ID,
   CHEAPEST_PASS,
+  PER_DAY_FEATURE,
+  getPass,
 } from "@/lib/pricing";
-import { FREE_ATTEMPTS, FREE_MAX_WORDS } from "@/lib/freeTier";
+import { FREE_ATTEMPTS } from "@/lib/freeTier";
+import { buildPricingFaqs } from "@/lib/pricingFaq";
+import { PassPrice, FreePrice, PassPerDayFeature, PricingFaqList } from "@/components/LocalPrice";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
 const pageUrl = `${siteUrl}/pricing`;
@@ -41,36 +46,16 @@ export const metadata = {
   },
 };
 
-const faqs = [
-  {
-    q: "Is there a free plan?",
-    a: `Yes, and it does not expire. You get ${FREE_ATTEMPTS} humanizer runs a day with up to ${FREE_MAX_WORDS.toLocaleString()} words per run. The AI detector and the Claude watermark remover run in your browser and have no usage limit at all. No account and no card required.`,
-  },
-  {
-    q: "What does a Pro pass get me?",
-    a: `Unlimited humanizer runs with no daily cap and no per-run word limit, for as long as the pass lasts: ${week.days} days for ${week.priceDisplay}, or ${PASS_DAYS} days for ${PRO_PRICE_DISPLAY}. Both passes include exactly the same features. Either one is a one-time payment, not a subscription.`,
-  },
-  {
-    q: `Which pass should I pick, ${week.days} days or ${PASS_DAYS}?`,
-    a: `If you have one essay or report to finish, the ${week.days}-day pass covers it. If you write every week, the ${PASS_DAYS}-day pass costs about $${(PRO_PRICE_USD / PASS_DAYS).toFixed(2)} a day against about $${(week.priceUsd / week.days).toFixed(2)} for the week pass, so it is the better deal.`,
-  },
-  {
-    q: "Do I need an account to use the free plan?",
-    a: "No. The free plan works straight from the page with nothing to sign up for, and your daily runs are tracked on your own device. An account is only needed for Pro, so that your access follows you across devices.",
-  },
-  {
-    q: "What happens when I hit the daily limit?",
-    a: "The humanizer pauses and shows you the upgrade option. The AI detector and watermark remover keep working. Your free runs come back automatically the next day, so you can wait it out at no cost if you would rather not subscribe.",
-  },
-  {
-    q: "Is my text stored?",
-    a: "No. The AI detector and the Claude watermark remover run entirely in your browser, so that text never leaves your device at all. Text sent to the humanizer is processed to generate your result and is not retained afterwards.",
-  },
-  {
-    q: "Does it renew automatically?",
-    a: `No. Each pass is a one-time payment that gives you ${week.days} or ${PASS_DAYS} days of unlimited access, so there is nothing to cancel and no card kept on file. When the pass runs out you simply drop back to the free plan, and you can buy another pass whenever you want. Buying early adds the days to the end of your current pass rather than replacing it.`,
-  },
-];
+/**
+ * The FAQ in USD, for the FAQPage structured data. The questions people see are
+ * rendered by PricingFaqList with the same wording in their own currency.
+ */
+const faqs = buildPricingFaqs({
+  weekPrice: week.priceDisplay,
+  proPrice: PRO_PRICE_DISPLAY,
+  weekPerDay: `$${(week.priceUsd / week.days).toFixed(2)}`,
+  proPerDay: `$${(PRO_PRICE_USD / PASS_DAYS).toFixed(2)}`,
+});
 
 function buildFaqSchema() {
   return {
@@ -122,8 +107,9 @@ export default function PricingPage() {
           </h1>
           <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
             Start free with no account and no card. When {FREE_ATTEMPTS} runs a day
-            stops being enough, a Pro pass removes the limits entirely: {week.priceDisplay} for{" "}
-            {week.days} days or {PRO_PRICE_DISPLAY} for {PASS_DAYS}. One payment, nothing to cancel.
+            stops being enough, a Pro pass removes the limits entirely:{" "}
+            <PassPrice passId={WEEK_PLAN_ID} /> for {week.days} days or{" "}
+            <PassPrice passId={PRO_PLAN_ID} /> for {PASS_DAYS}. One payment, nothing to cancel.
           </p>
         </div>
       </section>
@@ -153,7 +139,13 @@ export default function PricingPage() {
 
                 <div className="mt-3 flex items-baseline gap-1.5">
                   <span className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {plan.price}
+                    {getPass(plan.id) ? (
+                      <PassPrice passId={plan.id} />
+                    ) : plan.id === "free" ? (
+                      <FreePrice />
+                    ) : (
+                      plan.price
+                    )}
                   </span>
                   <span className="text-sm text-slate-500 dark:text-slate-400">
                     {plan.cadence}
@@ -179,7 +171,11 @@ export default function PricingPage() {
                       >
                         <CheckIcon />
                       </span>
-                      {feature}
+                      {feature === PER_DAY_FEATURE ? (
+                        <PassPerDayFeature passId={plan.id} />
+                      ) : (
+                        feature
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -212,18 +208,7 @@ export default function PricingPage() {
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6">
             Pricing questions
           </h2>
-          <div className="space-y-6">
-            {faqs.map((faq) => (
-              <div key={faq.q}>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">
-                  {faq.q}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                  {faq.a}
-                </p>
-              </div>
-            ))}
-          </div>
+          <PricingFaqList />
 
           <div className="mt-10 pt-8 border-t border-slate-200 dark:border-slate-800">
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
