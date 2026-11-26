@@ -16,7 +16,7 @@ import {
 } from "@/lib/pricing";
 import { FREE_ATTEMPTS } from "@/lib/freeTier";
 import { buildPricingFaqs } from "@/lib/pricingFaq";
-import { PassPrice, PassPerDayFeature, PricingFaqList } from "@/components/LocalPrice";
+import { PassPrice, FreePrice, PassPerDayFeature, PricingFaqList } from "@/components/LocalPrice";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://simplyhumanize.com").replace(/\/$/, "");
 const pageUrl = `${siteUrl}/pricing`;
@@ -139,7 +139,13 @@ export default function PricingPage() {
 
                 <div className="mt-3 flex items-baseline gap-1.5">
                   <span className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    {getPass(plan.id) ? <PassPrice passId={plan.id} /> : plan.price}
+                    {getPass(plan.id) ? (
+                      <PassPrice passId={plan.id} />
+                    ) : plan.id === "free" ? (
+                      <FreePrice />
+                    ) : (
+                      plan.price
+                    )}
                   </span>
                   <span className="text-sm text-slate-500 dark:text-slate-400">
                     {plan.cadence}
