@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useAuth } from "@/components/useAuth";
 import CheckoutButton from "@/components/CheckoutButton";
 import PassPicker from "@/components/PassPicker";
-import { PRO_PLAN_ID, WEEK_PLAN_ID, CHEAPEST_PASS, getPass } from "@/lib/pricing";
+import { usePaywall } from "@/components/usePaywall";
+import { PRO_PLAN_ID, WEEK_PLAN_ID, getPass } from "@/lib/pricing";
 import { FREE_ATTEMPTS } from "@/lib/freeTier";
 import { draftReturnPath } from "@/lib/upgradeDraft";
 
@@ -33,6 +34,10 @@ function daysLeft(iso) {
 
 export default function AccountPanel({ checkoutReady }) {
   const { user, loading, refresh, signOut } = useAuth();
+  // The checkout part of this page follows the visitor's paywall language and
+  // currency, since most arrive here straight from the upgrade dialog. The
+  // rest of the account page is still English.
+  const { t, price, cheapest } = usePaywall();
   const [justUpgraded, setJustUpgraded] = useState(false);
   /** @type {[null | { source: string, planId: string }, Function]} */
   const [buyIntent, setBuyIntent] = useState(null);
@@ -166,7 +171,7 @@ export default function AccountPanel({ checkoutReady }) {
           </>
         ) : (
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            {FREE_ATTEMPTS} humanizer runs a day. Go Pro from {CHEAPEST_PASS.priceDisplay} to
+            {FREE_ATTEMPTS} humanizer runs a day. Go Pro from {price(cheapest)} to
             remove the daily cap and the per-run word limit.
           </p>
         )}
@@ -188,9 +193,7 @@ export default function AccountPanel({ checkoutReady }) {
                 autoStart={autoStart && picked === null && pass.id === buyIntent?.planId}
                 source={buyIntent?.source}
                 label={
-                  isPro
-                    ? `Add ${pass.days} days — ${pass.priceDisplay}`
-                    : `Get Pro — ${pass.priceDisplay} for ${pass.days} days`
+                  isPro ? t.addDays(pass.days, price(pass)) : t.getPro(price(pass), pass.days)
                 }
               />
             </div>
