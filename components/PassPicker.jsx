@@ -1,6 +1,7 @@
 "use client";
 
 import { PASS_LIST, PRO_PLAN_ID } from "@/lib/pricing";
+import { usePaywall } from "@/components/usePaywall";
 
 /**
  * Choose between the Pro passes (7 days or 30 days), as two radio cards.
@@ -9,6 +10,9 @@ import { PASS_LIST, PRO_PLAN_ID } from "@/lib/pricing";
  * cheaper week pass reads as the easy first step and the month as the better
  * deal next to it.
  *
+ * Prices are in the visitor's currency (€ in the euro area, else $) and the
+ * labels in the paywall language — see usePaywall().
+ *
  * @param {{
  *   value: string,
  *   onChange: (planId: string) => void,
@@ -16,12 +20,13 @@ import { PASS_LIST, PRO_PLAN_ID } from "@/lib/pricing";
  * }} props
  */
 export default function PassPicker({ value, onChange, name = "pass" }) {
+  const { t, price, perDay } = usePaywall();
+
   return (
-    <div role="radiogroup" aria-label="Choose a pass" className="grid grid-cols-2 gap-3">
+    <div role="radiogroup" aria-label={t.choosePass} className="grid grid-cols-2 gap-3">
       {PASS_LIST.map((pass) => {
         const selected = pass.id === value;
         const bestValue = pass.id === PRO_PLAN_ID;
-        const perDay = (pass.priceUsd / pass.days).toFixed(2);
 
         return (
           <label
@@ -42,17 +47,17 @@ export default function PassPicker({ value, onChange, name = "pass" }) {
             />
             {bestValue && (
               <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                Best value
+                {t.bestValue}
               </span>
             )}
             <span className="block text-xs font-semibold text-slate-500 dark:text-slate-400">
-              {pass.days} days
+              {t.days(pass.days)}
             </span>
             <span className="mt-0.5 block text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              {pass.priceDisplay}
+              {price(pass)}
             </span>
             <span className="block text-[11px] text-slate-500 dark:text-slate-400">
-              ${perDay} a day
+              {t.perDay(perDay(pass))}
             </span>
           </label>
         );
